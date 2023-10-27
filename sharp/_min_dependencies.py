@@ -10,7 +10,7 @@ dependent_packages = {
     "numpy": (NUMPY_MIN_VERSION, "install"),
     "pandas": (PANDAS_MIN_VERSION, "install"),
     "matplotlib": (MATPLOTLIB_MIN_VERSION, "optional"),
-    "ml-research": ("0.4.2", "optional"),
+    #  "ml-research": ("0.4.2", "optional"),
     "pytest-cov": ("3.0.0", "tests"),
     "flake8": ("3.8.2", "tests"),
     "black": ("22.3", "tests"),
