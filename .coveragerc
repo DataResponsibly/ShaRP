@@ -1,0 +1,21 @@
+[run]
+branch = True
+source = sharp
+parallel = True
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    if self.verbose:
+ignore_errors = True
+omit =
+    */tests/*
+    */datasets/*
+show_missing = True

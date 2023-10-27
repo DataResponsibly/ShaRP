@@ -1,0 +1,73 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+
+jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+          architecture: x64
+
+      - name: Install dependencies
+        run: |
+          pip install ".[tests]"
+
+      - name: Run code analysis (black, mypy, flake8, pylint)
+        run: |
+          make code-analysis
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: [3.9, "3.10", 3.11, 3.12]
+    name: ${{ matrix.os }} Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+
+      - name: Install
+        run: |
+          # NOTE: pip, setuptools and wheel should be included with any python 
+          #       installation. It's being installed/upgraded here because the 
+          #       setup-python action is not including setuptools with Python 3.12
+          pip install --upgrade pip setuptools wheel
+          pip install .[tests,optional,docs]
+
+      - name: Test library
+        run: |
+          make test
+
+      - name: Test Docs
+        run: |
+          cd docs
+          make html
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
