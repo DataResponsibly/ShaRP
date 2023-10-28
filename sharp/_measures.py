@@ -1,7 +1,40 @@
-import numpy as np
+"""
+Quantitative Input Influence measures.
+
+- Set qii
+- Unary qii
+- Marginal qii
+- Shapley
+- Banzhaff
+"""
 
 
-def _set_qii_row(qoi, row, columns, dataset, sample_size, rng):
+def _unary(row_idx, col_idx, X, classifier, sample_size, rng):
+    pass
+
+
+def _set():
+    pass
+
+
+def _marginal():
+    pass
+
+
+def _shapley():
+    pass
+
+
+def _banzhaff():
+    pass
+
+
+MEASURES = {"unary", "set", "marginal", "shapley", "banzhaff"}
+
+# TEMP
+
+
+def _set_qii_row(row, columns, dataset, classifier, sample_size, rng):
     """
     Calculates the QII for a single or set of attributes in a single row.
 
@@ -24,15 +57,17 @@ def _set_qii_row(qoi, row, columns, dataset, sample_size, rng):
     """
     # Set up data point, original prediction, and values to replace with
     row = row.to_frame().T.copy() if row.shape[0] != 1 else row.copy()
+    y_pred = classifier.predict(row)
 
-    # Drop the row we are explaining (if exists)
+    # Drop the row we are explaining
+    # TODO : eliminate copy here probably (but do drop the row if it exists)
     if row.index[0] in dataset.index:
         temp_dataset = dataset.drop([row.index[0]])
     else:
         temp_dataset = dataset.copy()
 
     # Draw new samples uniformly at random
-    mod_rows = temp_dataset.sample(n=sample_size, axis=0, random_state=rng)
+    mod_rows = temp_dataset.sample(n=sample_size, axis=0)
 
     # Unary or Set, make a list of columns
     # TODO : Maybe check that the column is a real column and warn the user?
@@ -47,11 +82,14 @@ def _set_qii_row(qoi, row, columns, dataset, sample_size, rng):
         if col not in columns:
             mod_rows[col] = np.repeat(row[col].values, sample_size)
 
+    # # Modify original row `sample_size` times and get predictions
+    y_pred_mod = classifier.predict(mod_rows)
+
     # Return score
-    return qoi.calculate(row, mod_rows)
+    return 1 - (y_pred_mod == y_pred).astype(int).mean()
 
 
-def _marginal_qii_row(qoi, row, column, set_columns, dataset, sample_size, rng):
+def _marginal_qii_row(row, column, set_columns, dataset, classifier, sample_size, rng):
     """
     Calculates the marginal QII for a single or set of attributes in a single row.
 
@@ -74,18 +112,28 @@ def _marginal_qii_row(qoi, row, column, set_columns, dataset, sample_size, rng):
           the QII score of the attribute,
           -- how this attribute contribute to the machine.
     """
-
     # Set up data point, original prediction, and values to replace with
     row = row.to_frame().T.copy() if row.shape[0] != 1 else row
 
     # Drop the row we are explaining
+    # TODO : eliminate copy here probably (but do drop the row if it exists)
     if row.index[0] in dataset.index:
         temp_dataset = dataset.drop([row.index[0]])
     else:
         temp_dataset = dataset.copy()
 
     # Draw new samples uniformly at random
-    mod_rows2 = temp_dataset.sample(n=sample_size, axis=0, random_state=rng)
+    mod_rows2 = temp_dataset.sample(n=sample_size, axis=0)
+
+    # TODO : Make sure "column" is not in "columns"
+    # Make a list of columns
+    # if type(set_columns) == str:
+    #     if set_columns != column:
+    #         cols = [set_columns]
+    #     else:
+    #         cols = []
+    # else:
+    #     cols = set_columns
 
     # Keep original values for the columns not in "columns"
     # TODO : Speed this up!!
@@ -97,5 +145,11 @@ def _marginal_qii_row(qoi, row, column, set_columns, dataset, sample_size, rng):
     mod_rows1 = mod_rows2.copy()
     mod_rows1[column] = np.repeat(row[column].values, sample_size)
 
+    # # Modify original row `sample_size` times and get predictions
+    y_pred_mod1 = classifier.predict(mod_rows1)
+
+    # Modify original row `sample_size` times (again) and get predictions
+    y_pred_mod2 = classifier.predict(mod_rows2)
+
     # Return score
-    return qoi.calculate(mod_rows1, mod_rows2)
+    return 1 - (y_pred_mod1 == y_pred_mod2).astype(int).mean()
