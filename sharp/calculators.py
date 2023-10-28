@@ -54,12 +54,7 @@ def group_set_qii(qoi, columns, dataset, sample_size=None, random_state=None):
 
 
 def group_marginal_qii(
-    qoi,
-    column,
-    set_columns,
-    dataset,
-    sample_size=None,
-    random_state=None
+    qoi, column, set_columns, dataset, sample_size=None, random_state=None
 ):
     """
     This is the function that to calculate the marginal QII for a attribute.
@@ -139,21 +134,21 @@ def shapley_score(qoi, row, dataset, target, random_state, iterate_time=30):
     coal_ftr_names = np.delete(ftr_names, np.where(ftr_names == target))
 
     total_score = 0
-    for set_size in range(len(coal_ftr_names)+1):
+    for set_size in range(len(coal_ftr_names) + 1):
         for set_columns in combinations(coal_ftr_names, set_size):
             # To calculate the marginal score of each column in
-            score = (
-                _marginal_qii_row(
-                    qoi=qoi,
-                    row=row,
-                    column=target,
-                    set_columns=set_columns,
-                    dataset=dataset,
-                    rng=random_state,
-                    sample_size=iterate_time,
-                )
+            score = _marginal_qii_row(
+                qoi=qoi,
+                row=row,
+                column=target,
+                set_columns=set_columns,
+                dataset=dataset,
+                rng=random_state,
+                sample_size=iterate_time,
             )
-            total_score = total_score + score / (comb(len(coal_ftr_names), set_size) * len(ftr_names))
+            total_score = total_score + score / (
+                comb(len(coal_ftr_names), set_size) * len(ftr_names)
+            )
     return total_score
 
 
@@ -185,19 +180,17 @@ def banzhaf_score(qoi, row, dataset, target, random_state, iterate_time=30):
     coal_ftr_names = np.delete(ftr_names, np.where(ftr_names == target))
 
     total_score = 0
-    for set_size in range(len(coal_ftr_names)+1):
+    for set_size in range(len(coal_ftr_names) + 1):
         for set_columns in combinations(coal_ftr_names, set_size):
             # To calculate the marginal score of each column in
-            score = (
-                _marginal_qii_row(
-                    qoi=qoi,
-                    row=row,
-                    column=target,
-                    set_columns=set_columns,
-                    dataset=dataset,
-                    rng=random_state,
-                    sample_size=iterate_time,
-                )
+            score = _marginal_qii_row(
+                qoi=qoi,
+                row=row,
+                column=target,
+                set_columns=set_columns,
+                dataset=dataset,
+                rng=random_state,
+                sample_size=iterate_time,
             )
             total_score = total_score + score / 2 ** (len(ftr_names) - 1)
     return total_score

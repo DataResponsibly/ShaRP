@@ -51,37 +51,29 @@ def _set_qii_row(qoi, row, columns, dataset, sample_size, rng):
     return qoi.calculate(row, mod_rows)
 
 
-def _marginal_qii_row(
-    qoi,
-    row,
-    column,
-    set_columns,
-    dataset,
-    sample_size,
-    rng
-):
+def _marginal_qii_row(qoi, row, column, set_columns, dataset, sample_size, rng):
     """
-        Calculates the marginal QII for a single or set of attributes in a single row.
+    Calculates the marginal QII for a single or set of attributes in a single row.
 
-        Parameters
-        ----------
-          row [pandas.series]:
-              The dataframe row we are explaining.
-          column [str]:
-              The column we are explaining.
-          set_columns [str, list]:
-              The attribute (list) that we are going to use for the marginal.
-          dataset [pandas.dataframe]:
-              The dataset to use in order to test the classifier.
-          classifier [function]:
-              The machine learning model we used to predict the data.
-          sample_size [int], default=30:
-              how many times we calculate the QII.
+    Parameters
+    ----------
+      row [pandas.series]:
+          The dataframe row we are explaining.
+      column [str]:
+          The column we are explaining.
+      set_columns [str, list]:
+          The attribute (list) that we are going to use for the marginal.
+      dataset [pandas.dataframe]:
+          The dataset to use in order to test the classifier.
+      classifier [function]:
+          The machine learning model we used to predict the data.
+      sample_size [int], default=30:
+          how many times we calculate the QII.
 
-          return [int]:
-              the QII score of the attribute,
-              -- how this attribute contribute to the machine.
-        """
+      return [int]:
+          the QII score of the attribute,
+          -- how this attribute contribute to the machine.
+    """
 
     # Set up data point, original prediction, and values to replace with
     row = row.to_frame().T.copy() if row.shape[0] != 1 else row

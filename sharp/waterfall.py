@@ -20,10 +20,9 @@ import sys
 
 sys.path.append("../")
 
-import qii
-from qii import importance_plot, importance_plot_test
-from qii.qoi import RankingRank, RankingTopK, RankingScore, RankingNoFunction
-from qii.ranking import Ranking
+from .plots import importance_plot, importance_plot_test
+from .qoi import RankingRank, RankingTopK, RankingScore, RankingNoFunction
+from .ranking import Ranking
 
 
 def waterfall(shap_values, max_display=10, show=True):

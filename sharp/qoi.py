@@ -1,4 +1,4 @@
-from qii.ranking import Ranking
+from .ranking import Ranking
 from itertools import combinations
 import numpy as np
 import pandas as pd
@@ -88,9 +88,15 @@ class RankingNoFunction(QoI):
     def estimate(self, conditions):
         # TODO, this is only ranking
         try:
-            rank = self.coal_contributions[pd.eval(conditions) == True]['Avg Rank'].values
-            score = self.coal_contributions[pd.eval(conditions) == True]['Avg Score'].values
-            topK = self.coal_contributions[pd.eval(conditions) == True]['Avg topK'].values
+            rank = self.coal_contributions[pd.eval(conditions) == True][
+                "Avg Rank"
+            ].values
+            score = self.coal_contributions[pd.eval(conditions) == True][
+                "Avg Score"
+            ].values
+            topK = self.coal_contributions[pd.eval(conditions) == True][
+                "Avg topK"
+            ].values
         except:
             print("Didn't find the entry")
             self.print_table()
@@ -107,15 +113,16 @@ class RankingNoFunction(QoI):
     def calculate_coalition_contributions(self):
         ftr_names = self.ranking.columns.tolist()
         coal_ftr_names = ftr_names
-        coal_ftr_names.remove('Score')
-        coal_ftr_names.remove('Rank')
+        coal_ftr_names.remove("Score")
+        coal_ftr_names.remove("Rank")
 
         # Create a row that contains null everywhere and the average rank and average score of the entire df
-        all_null = {'size': [self.ranking.shape[0]],
-                    'Avg Score': [self.ranking['Score'].mean()],
-                    'Avg Rank': [self.ranking['Rank'].mean()],
-                    'Avg topK': [self.K / self.ranking.shape[0]]
-                    }
+        all_null = {
+            "size": [self.ranking.shape[0]],
+            "Avg Score": [self.ranking["Score"].mean()],
+            "Avg Rank": [self.ranking["Rank"].mean()],
+            "Avg topK": [self.K / self.ranking.shape[0]],
+        }
 
         # Save the avg score and avg rank of the coalition in a dataframe
         coalitions = pd.DataFrame(all_null)
@@ -124,23 +131,29 @@ class RankingNoFunction(QoI):
         for set_size in range(1, len(coal_ftr_names) + 1):
             for set_columns in combinations(coal_ftr_names, set_size):
                 # Get number of items per coalition
-                temp_df = self.ranking.groupby(by=list(set_columns), as_index=False, group_keys=True)
+                temp_df = self.ranking.groupby(
+                    by=list(set_columns), as_index=False, group_keys=True
+                )
 
                 # Get sum of scores per coalition
-                temp_df2 = pd.merge(temp_df.size(), temp_df['Score'].sum(), on=set_columns)
+                temp_df2 = pd.merge(
+                    temp_df.size(), temp_df["Score"].sum(), on=set_columns
+                )
 
                 # Get sum of ranks per coalition
-                temp_df3 = pd.merge(temp_df2, temp_df['Rank'].sum(), on=set_columns)
+                temp_df3 = pd.merge(temp_df2, temp_df["Rank"].sum(), on=set_columns)
 
-                temp_df3['topK'] = temp_df['Rank'].apply(lambda x: (x <= self.K).sum())['Rank']
+                temp_df3["topK"] = temp_df["Rank"].apply(lambda x: (x <= self.K).sum())[
+                    "Rank"
+                ]
 
                 temp_df = temp_df3
 
                 # Calculate average sum and rank
-                temp_df['Avg Score'] = temp_df['Score'] / temp_df['size']
-                temp_df['Avg Rank'] = temp_df['Rank'] / temp_df['size']
-                temp_df['Avg topK'] = temp_df['topK'] / temp_df['size']
-                temp_df.drop(columns=['Rank', 'Score'], inplace=True)
+                temp_df["Avg Score"] = temp_df["Score"] / temp_df["size"]
+                temp_df["Avg Rank"] = temp_df["Rank"] / temp_df["size"]
+                temp_df["Avg topK"] = temp_df["topK"] / temp_df["size"]
+                temp_df.drop(columns=["Rank", "Score"], inplace=True)
 
                 # Save coalition in the df
                 coalitions = pd.concat([coalitions, temp_df], ignore_index=True)

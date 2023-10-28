@@ -12,7 +12,11 @@ import seaborn as sns
 def global_unary_plot(qoi, dataset, rng, sample_size):
     def _function(col):
         qii = group_set_qii(
-            qoi=qoi, columns=col, dataset=dataset, random_state=rng, sample_size=sample_size
+            qoi=qoi,
+            columns=col,
+            dataset=dataset,
+            random_state=rng,
+            sample_size=sample_size,
         )
         return col, qii.mean()
 
@@ -25,7 +29,9 @@ def global_unary_plot(qoi, dataset, rng, sample_size):
         [(c, q) for c, q in unary_quant], columns=["Features", "Unary"]
     )
     ax = (
-        unary_results.set_index("Features").sort_values("Unary", ascending=False).plot.bar()
+        unary_results.set_index("Features")
+        .sort_values("Unary", ascending=False)
+        .plot.bar()
     )
     ax.set_ylabel("Score")
     ax.set_title("Global Scores (Unary QII)")
@@ -56,7 +62,9 @@ def global_set_combo_plot(qoi, dataset, rng, sample_size, limit, num):
         [(" + ".join(c), q) for c, q in set_quant], columns=["Feature sets", "Set"]
     )
     ax = (
-        set_results.set_index("Feature sets").sort_values("Set", ascending=False).plot.bar()
+        set_results.set_index("Feature sets")
+        .sort_values("Set", ascending=False)
+        .plot.bar()
     )
     ax.set_ylabel("Score")
     ax.set_title("Global Scores (Set QII) - Over 0.075")
@@ -65,14 +73,17 @@ def global_set_combo_plot(qoi, dataset, rng, sample_size, limit, num):
 def global_marginal_plot(qoi, dataset, rng, sample_size):
     # currently this implementation is quite time consuming, parallelizing for now; but must be optimized later.
     def _function(feature):
-        return feature, group_marginal_qii(
-            qoi=qoi,
-            column=feature,
-            set_columns=dataset.columns.drop([feature]),
-            dataset=dataset,
-            random_state=rng,
-            sample_size=sample_size,
-        ).mean()
+        return (
+            feature,
+            group_marginal_qii(
+                qoi=qoi,
+                column=feature,
+                set_columns=dataset.columns.drop([feature]),
+                dataset=dataset,
+                random_state=rng,
+                sample_size=sample_size,
+            ).mean(),
+        )
 
     marginal_quant = []
     for cols in dataset.columns:
@@ -91,7 +102,9 @@ def global_marginal_plot(qoi, dataset, rng, sample_size):
     ax.set_title("Global Scores (Marginal QII)")
 
 
-def importance_plot(qoi, row_index, dataset, rng, sample_size, function_type, show=True):
+def importance_plot(
+    qoi, row_index, dataset, rng, sample_size, function_type, show=True
+):
     if function_type.lower() == "banzhaf":
         function_type = "Banzhaf"
         score_function = banzhaf_score
@@ -107,7 +120,7 @@ def importance_plot(qoi, row_index, dataset, rng, sample_size, function_type, sh
             dataset=dataset,
             target=feature,
             random_state=rng,
-            iterate_time=sample_size
+            iterate_time=sample_size,
         )
 
     shapley_quant = []
@@ -134,7 +147,11 @@ def importance_plot(qoi, row_index, dataset, rng, sample_size, function_type, sh
 def fig1(qoi, dataset, rng, sample_size):
     def _function(col):
         qii = group_set_qii(
-            qoi=qoi, columns=col, dataset=dataset, random_state=rng, sample_size=sample_size
+            qoi=qoi,
+            columns=col,
+            dataset=dataset,
+            random_state=rng,
+            sample_size=sample_size,
         )
         return col, qii
 
@@ -151,11 +168,17 @@ def fig1(qoi, dataset, rng, sample_size):
     ax.set_ylabel("Number of individuals")
 
 
-def group_disparity_plot(qoi, column, dataset, random_state=42, sample_size=30, save_pic=False):
+def group_disparity_plot(
+    qoi, column, dataset, random_state=42, sample_size=30, save_pic=False
+):
     # Figure 2 - (c) and (d) - cat_0 - A11 vs A14
     def _function(col, x):
         return col, group_set_qii(
-            qoi=qoi, columns=col, dataset=x, random_state=random_state, sample_size=sample_size
+            qoi=qoi,
+            columns=col,
+            dataset=x,
+            random_state=random_state,
+            sample_size=sample_size,
         )
 
     unary_quant = {}
@@ -188,15 +211,23 @@ def group_disparity_plot(qoi, column, dataset, random_state=42, sample_size=30, 
         plt.show()
 
 
-def global_contributions(qoi, df, seed, sample_size, ranking_function, filepath, strata=10, aggr_type="Shapley"):
-
+def global_contributions(
+    qoi,
+    df,
+    seed,
+    sample_size,
+    ranking_function,
+    filepath,
+    strata=10,
+    aggr_type="Shapley",
+):
     # Iterate over the entire dataset
     iterable = list(df.index)
 
     open(filepath, "x")
 
     # Calculate ShaRP for each item
-    result_cols = ['Label', 'Score', 'Score bucket', 'Feature', 'Contribution']
+    result_cols = ["Label", "Score", "Score bucket", "Feature", "Contribution"]
 
     def _qoi_exp(ind):
         # Create dataframe for the results
@@ -204,12 +235,16 @@ def global_contributions(qoi, df, seed, sample_size, ranking_function, filepath,
         temp2 = importance_plot(qoi, ind, df, seed, sample_size, aggr_type, False)
         for _, t_row in temp2.iterrows():
             score = ranking_function(df.loc[[ind]])[0]
-            temp = [[ind, score, str(round(score, 1)), t_row['Features'], t_row['Shapley']]]
+            temp = [
+                [ind, score, str(round(score, 1)), t_row["Features"], t_row["Shapley"]]
+            ]
             temp3 = pd.DataFrame(data=temp, columns=result_cols)
             df_sharp = pd.concat([df_sharp, temp3], ignore_index=True)
-        df_sharp.to_csv(filepath, mode='a', index=False, header=False)
+        df_sharp.to_csv(filepath, mode="a", index=False, header=False)
 
-    parallel_loop(_qoi_exp, iterable, n_jobs=-1, progress_bar=True, description="Global ShaRP")
+    parallel_loop(
+        _qoi_exp, iterable, n_jobs=-1, progress_bar=True, description="Global ShaRP"
+    )
 
     # Create Rank column
     df_contrs = pd.read_csv(Path(filepath), names=result_cols)
@@ -217,13 +252,18 @@ def global_contributions(qoi, df, seed, sample_size, ranking_function, filepath,
     df_all = df_ranks.merge(df_contrs, right_on="Label", left_index=True)
 
     rows = len(df_ranks.index)
-    df_all ['Rank Stratum'] = ["<10%" if math.floor((rank - 1) / (rows / strata)) == 0 else str(
-         math.floor((rank - 1) / (rows / strata)) * 10) + "-\n" + str(
-         math.floor(((rank - 1) / (rows / strata)) + 1) * 10) + "%" for rank in df_all['Rank']]
+    df_all["Rank Stratum"] = [
+        "<10%"
+        if math.floor((rank - 1) / (rows / strata)) == 0
+        else str(math.floor((rank - 1) / (rows / strata)) * 10)
+        + "-\n"
+        + str(math.floor(((rank - 1) / (rows / strata)) + 1) * 10)
+        + "%"
+        for rank in df_all["Rank"]
+    ]
 
     # Save dataframe to file
     filepath = Path(filepath)
-    df_all .to_csv(filepath)
+    df_all.to_csv(filepath)
 
     return df_all
-
