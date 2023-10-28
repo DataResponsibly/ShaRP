@@ -1,40 +1,35 @@
-from .calculators import group_set_qii, group_marginal_qii, shapley_score, banzhaf_score
-from .qoi import (
-    QoI,
-    BCFlipped,
-    BCLikelihood,
-    RankingNoFunction,
-    RankingTopK,
-    RankingRank,
-    RankingScore,
-)
-from .plots import (
-    global_unary_plot,
-    global_set_combo_plot,
-    global_marginal_plot,
-    importance_plot,
-    fig1,
-    group_disparity_plot,
-    global_contributions,
-)
+""".
+Implementation of the ShaRP algorithm (Shapley for Rankings and Preferences).
 
-__all__ = [
-    "group_set_qii",
-    "group_marginal_qii",
-    "shapley_score",
-    "banzhaf_score",
-    "QoI",
-    "BCFlipped",
-    "BCLikelihood",
-    "RankingNoFunction",
-    "RankingTopK",
-    "RankingRank",
-    "RankingScore",
-    "global_unary_plot",
-    "global_set_combo_plot",
-    "global_marginal_plot",
-    "importance_plot",
-    "fig1",
-    "group_disparity_plot",
-    "global_contributions",
-]
+``sharp`` is a library containing the implementation of the ShaRP
+algorithm (Shapley for Rankings and Preferences), a framework that can be used
+to explain the contributions of features to different aspects of a ranked
+outcome, based on Shapley values.
+
+Subpackages
+-----------
+**TODO**
+"""
+import sys
+
+try:
+    # This variable is injected in the __builtins__ by the build
+    # process. It is used to enable importing subpackages of sharp when
+    # the binaries are not built
+    # mypy error: Cannot determine type of '__SHARP_SETUP__'
+    __SHARP_SETUP__  # type: ignore
+except NameError:
+    __SHARP_SETUP__ = False
+
+if __SHARP_SETUP__:
+    sys.stderr.write("Partial import of imblearn during the build process.\n")
+    # We are not importing the rest of sharp during the build
+    # process, as it may not be compiled yet
+else:
+    # from . import utils
+
+    from ._version import __version__
+
+    __all__ = [
+        "__version__",
+    ]
