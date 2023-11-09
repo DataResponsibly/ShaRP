@@ -1,95 +1,50 @@
 """
 Quantitative Input Influence measures.
-
-- Set qii
-- Unary qii
-- Marginal qii
-- Shapley
-- Banzhaff
 """
+import numpy as np
+from math import comb
+from itertools import combinations
 
 
-def _unary(row_idx, col_idx, X, classifier, sample_size, rng):
-    pass
-
-
-def _set():
-    pass
-
-
-def _marginal():
-    pass
-
-
-def _shapley():
-    pass
-
-
-def _banzhaff():
-    pass
-
-
-MEASURES = {"unary", "set", "marginal", "shapley", "banzhaff"}
-
-# TEMP
-
-
-def _set_qii_row(row, columns, dataset, classifier, sample_size, rng):
+def _set(row, col_idx, X, qoi, sample_size, rng, **kwargs):
     """
     Calculates the QII for a single or set of attributes in a single row.
 
     Parameters
     ----------
-      columns [str, list]:
-          The attribute that we are going to explain.
-      row [pandas.series]:
-          The dataframe row we are explaining.
-      dataset [pandas.dataframe]:
-          The dataset to use in order to test the classifier.
-      classifier [function]:
-          The machine learning model we used to predict the data.
-      sample_size [int], default=30:
-          how many times we calculate the QII.
+    row_idx: pd.Series
+        The index of the row to be explained.
 
-      return [int]:
-          the QII score of the attribute,
-          -- how this attribute contribute to the machine.
+    col_idx: [str, list]
+        The index of the attribute to be explained.
+
+    dataset: [pd.DataFrame, np.ndarray]
+        The dataframe/array used to test the classifier.
+
+    qoi: qoi object
+        The quantity of interest used to measure feature importance.
+
+    sample_size: int, default=30
+        How many times we calculate the qoi.
+
+    Returns
+    -------
+    scores: int
+        The QII score of the attribute, i.e., how this attribute contributes to the QOI.
     """
-    # Set up data point, original prediction, and values to replace with
-    row = row.to_frame().T.copy() if row.shape[0] != 1 else row.copy()
-    y_pred = classifier.predict(row)
-
-    # Drop the row we are explaining
-    # TODO : eliminate copy here probably (but do drop the row if it exists)
-    if row.index[0] in dataset.index:
-        temp_dataset = dataset.drop([row.index[0]])
-    else:
-        temp_dataset = dataset.copy()
 
     # Draw new samples uniformly at random
-    mod_rows = temp_dataset.sample(n=sample_size, axis=0)
+    X_sampled = rng.choice(X, size=sample_size, replace=True)
 
-    # Unary or Set, make a list of columns
-    # TODO : Maybe check that the column is a real column and warn the user?
-    if type(columns) == str:
-        cols = [columns]
-    else:
-        cols = columns
-
-    # Keep original values for the columns not in "columns"
-    # TODO : Speed this up!!
-    for col in dataset.columns:
-        if col not in columns:
-            mod_rows[col] = np.repeat(row[col].values, sample_size)
-
-    # # Modify original row `sample_size` times and get predictions
-    y_pred_mod = classifier.predict(mod_rows)
+    # Unary/Set approach
+    X_modded = np.repeat(row.reshape(1, -1), repeats=sample_size, axis=0)
+    X_modded[:, col_idx] = X_sampled[:, col_idx]
 
     # Return score
-    return 1 - (y_pred_mod == y_pred).astype(int).mean()
+    return qoi.calculate(row, X_modded)
 
 
-def _marginal_qii_row(row, column, set_columns, dataset, classifier, sample_size, rng):
+def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, rng, **kwargs):
     """
     Calculates the marginal QII for a single or set of attributes in a single row.
 
@@ -107,49 +62,136 @@ def _marginal_qii_row(row, column, set_columns, dataset, classifier, sample_size
           The machine learning model we used to predict the data.
       sample_size [int], default=30:
           how many times we calculate the QII.
-
       return [int]:
           the QII score of the attribute,
           -- how this attribute contribute to the machine.
     """
-    # Set up data point, original prediction, and values to replace with
-    row = row.to_frame().T.copy() if row.shape[0] != 1 else row
-
-    # Drop the row we are explaining
-    # TODO : eliminate copy here probably (but do drop the row if it exists)
-    if row.index[0] in dataset.index:
-        temp_dataset = dataset.drop([row.index[0]])
-    else:
-        temp_dataset = dataset.copy()
-
     # Draw new samples uniformly at random
-    mod_rows2 = temp_dataset.sample(n=sample_size, axis=0)
+    X_sampled = X[rng.choice(np.arange(X.shape[0]), size=sample_size, replace=True)]
 
-    # TODO : Make sure "column" is not in "columns"
-    # Make a list of columns
-    # if type(set_columns) == str:
-    #     if set_columns != column:
-    #         cols = [set_columns]
-    #     else:
-    #         cols = []
-    # else:
-    #     cols = set_columns
+    # Marginal approach
+    X_modded1 = np.repeat(row.reshape(1, -1), repeats=sample_size, axis=0)
 
-    # Keep original values for the columns not in "columns"
-    # TODO : Speed this up!!
-    for col in dataset.columns:
-        if (col not in set_columns) & (col != column):
-            mod_rows2[col] = np.repeat(row[col].values, sample_size)
+    # For X_modded1, keep:
+    # - ``X_sampled`` values for the columns in ``set_cols_idx``
+    X_modded1[:, set_cols_idx] = X_sampled[:, set_cols_idx]
 
-    # For mod_rows1, also remove "column"
-    mod_rows1 = mod_rows2.copy()
-    mod_rows1[column] = np.repeat(row[column].values, sample_size)
-
-    # # Modify original row `sample_size` times and get predictions
-    y_pred_mod1 = classifier.predict(mod_rows1)
-
-    # Modify original row `sample_size` times (again) and get predictions
-    y_pred_mod2 = classifier.predict(mod_rows2)
+    # For X_modded2, keep:
+    # - ``X_sampled`` values for the columns in ``set_cols_idx`` and ``col_idx``
+    X_modded2 = X_modded1.copy()
+    X_modded2[:, col_idx] = X_sampled[:, col_idx]
 
     # Return score
-    return 1 - (y_pred_mod1 == y_pred_mod2).astype(int).mean()
+    return qoi.calculate(X_modded1, X_modded2)
+
+
+def _shapley(row, col_idx, X, qoi, sample_size, rng, **kwargs):
+    """
+    Calculates the Shapley for a single attribute of a single row.
+
+    Parameters
+    ----------
+      row [pandas.series]:
+          The dataframe row we are explaining.
+      dataset [pandas.dataframe]:
+          The dataset to use in order to test the classifier.
+      target [str]:
+          The feature we are explaining
+      model [function]:
+          The machine learning model we used to predict the data.
+      random_state [int]:
+          Random state seed.
+      iterate_time [int], default=30:
+          how many times we calculate the marginal per coalition.
+
+      return [int]:
+          the Shapley score of the attribute for the feature,
+          -- how this attribute contributes to the feature's prediction.
+    """
+
+    # Get indices for all columns except the one being explained
+    rest_cols_idx = np.arange(X.shape[1])
+    rest_cols_idx = rest_cols_idx[rest_cols_idx != col_idx]
+
+    # Set up variable to track the total score for the specific attribute
+    total_score = 0
+
+    # Calculate the marginal score of every combination for ``col_idx`` vs rest
+    iterable = [
+        set_cols_idx
+        for set_size in range(1, len(rest_cols_idx) + 1)
+        for set_cols_idx in combinations(rest_cols_idx, set_size)
+    ]
+    for set_cols_idx in iterable:
+        score = _marginal(
+            row=row,
+            col_idx=col_idx,
+            set_cols_idx=set_cols_idx,
+            X=X,
+            qoi=qoi,
+            sample_size=sample_size,
+            rng=rng,
+        )
+        total_score += score / (comb(X.shape[1] - 1, len(set_cols_idx)) * X.shape[1])
+
+    return total_score
+
+
+def _banzhaff(row, col_idx, X, qoi, sample_size, rng, **kwargs):
+    """
+    Calculates the Shapley for a single attribute of a single row.
+
+    Parameters
+    ----------
+      row [pandas.series]:
+          The dataframe row we are explaining.
+      dataset [pandas.dataframe]:
+          The dataset to use in order to test the classifier.
+      target [str]:
+          The feature we are explaining
+      model [function]:
+          The machine learning model we used to predict the data.
+      random_state [int]:
+          Random state seed.
+      iterate_time [int], default=30:
+          how many times we calculate the marginal per coalition.
+
+      return [int]:
+          the Shapley score of the attribute for the feature,
+          -- how this attribute contributes to the feature's prediction.
+    """
+    # Get indices for all columns except the one being explained
+    rest_cols_idx = np.arange(X.shape[1])
+    rest_cols_idx = rest_cols_idx[rest_cols_idx != col_idx]
+
+    # Set up variable to track the total score for the specific attribute
+    total_score = 0
+
+    # Calculate the marginal score of every combination for ``col_idx`` vs rest
+    iterable = [
+        set_cols_idx
+        for set_size in range(1, len(rest_cols_idx) + 1)
+        for set_cols_idx in combinations(rest_cols_idx, set_size)
+    ]
+    for set_cols_idx in iterable:
+        score = _marginal(
+            row=row,
+            col_idx=col_idx,
+            set_cols_idx=set_cols_idx,
+            X=X,
+            qoi=qoi,
+            sample_size=sample_size,
+            rng=rng,
+        )
+        total_score += score / 2 ** (X.shape[1] - 1)
+
+    return total_score
+
+
+MEASURES = {
+    "unary": _set,
+    "set": _set,
+    "marginal": _marginal,
+    "shapley": _shapley,
+    "banzhaff": _banzhaff,
+}

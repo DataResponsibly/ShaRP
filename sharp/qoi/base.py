@@ -1,0 +1,138 @@
+from abc import ABC, abstractmethod
+import numpy as np
+from sharp.utils._rank_utils import scores_to_rank
+
+
+class BaseQoI(ABC):
+    """
+    Base class to implement Quantities of Interest (QoI) for classification or regression
+    tasks. It should not be used directly. Any QoI must define at least 2 functions:
+
+      :func:`qoi.estimate`:
+          A function that predicts the model's result for one or multiple items.
+      :func:`qoi.calculate`:
+          A function that applies a difference metric to the predictions of two items, or
+          two sets of items. If sets, then the mean difference is returned.
+
+    Parameters
+    ----------
+    target_function : function
+        Method used to predict a label or score. The output of this function
+        should be a 1-dimensional array with the expected target (i.e., label or score)
+        for each of the passed observations.
+    """
+
+    _qoi_type = "score"
+
+    def __init__(self, target_function):
+        # NOTE: This parameter name is not descriptive enough
+        self.target_function = target_function
+
+    def estimate(self, rows):
+        """
+        Prepares and runs ``self.target_function`` for a set of samples.
+
+        Parameters
+        ----------
+        rows : array-like of shape (n_samples, n_features)
+            Samples over which ``target_function`` will be applied.
+
+        Returns
+        -------
+        target_output : np.ndarray of shape (n_samples,)
+            Label predictions or score estimations.
+        """
+        return self._estimate(rows)
+
+    def calculate(self, rows1, rows2):
+        """
+        Calculates the influence score based on the ``target_function`` outputs for
+        ``rows1`` and ``rows2``.
+
+        Parameters
+        ----------
+        rows1 : array-like of shape (n_samples, n_features)
+            First set of samples to compare.
+
+        rows2 : array-like of shape (n_samples, n_features)
+            Second set of samples to compare.
+
+        Returns
+        -------
+        influence_score : float
+            Influence score for ``rows1``, compared to ``rows2``.
+        """
+        return self._calculate(rows1, rows2)
+
+    @abstractmethod
+    def _estimate(self, rows):
+        pass
+
+    @abstractmethod
+    def _calculate(self, rows1, rows2):
+        pass
+
+
+class BaseRankingQoI(BaseQoI, ABC):
+    """
+    Base class to implement Quantities of Interest (QoI) for ranking tasks. It should not
+    be used directly. Any QoI must define at least 2 functions:
+
+      :func:`qoi.estimate`:
+          A function that predicts the model's result for one or multiple items.
+      :func:`qoi.calculate`:
+          A function that applies a difference metric to the predictions of two items, or
+          two sets of items. If sets, then the mean difference is returned.
+
+    Parameters
+    ----------
+    target_function : function
+        Method used to calculate a score. The output of this function
+        should be a 1-dimensional array with the expected target (i.e., label, score, or
+        ranking) for each of the passed observations.
+
+    X : array-like of shape (n_samples, n_features)
+        The input samples.
+    """
+
+    _qoi_type = "rank"
+
+    def __init__(self, target_function, X=None):
+        # NOTE: This parameter name is not descriptive enough
+        self.target_function = target_function
+        self.X = X
+
+    def rank(self, X, X_base=None):
+        """
+        Computes the ranking of samples ``X`` within a dataset ``X_base``.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The input samples to calculate the rankings for.
+
+        Returns
+        -------
+        rankings : np.ndarray of shape (n_samples,)
+            Rankings for all samples in ``X``.
+        """
+
+        if X_base is None and self.X is None:
+            msg = (
+                "Either ``self.X`` (defined in the object initialization) or ``X_base`` "
+                "(a paremeter from the ``rank`` method) must be defined."
+            )
+            raise ValueError(msg)
+        elif X_base is None:
+            X_base = self.X
+
+        # calculate scores to get rankings for
+        scores = self.target_function(X)
+
+        scores_base = self.target_function(X_base)
+        scores_all = np.concatenate([scores_base, scores])
+
+        ranks = scores_to_rank(scores_all)
+        ranks = ranks[scores_base.shape[0] :]
+
+        return ranks
