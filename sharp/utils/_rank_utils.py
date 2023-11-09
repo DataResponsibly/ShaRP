@@ -1,0 +1,13 @@
+import numpy as np
+
+
+def scores_to_rank(y, direction=1):
+    """
+    Converts an array with scores to a ranking.
+
+    If lower is better, set direction to -1 instead.
+    """
+    temp = np.argsort(y * direction)
+    ranks = np.zeros(*y.shape, dtype=int)
+    ranks[temp] = np.arange(*y.shape) + 1
+    return ranks

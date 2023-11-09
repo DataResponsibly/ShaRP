@@ -10,59 +10,98 @@ Topics that must be covered:
   * Shapley
   * Banzhaff
 
-Scores or Bool?
-
 TODO: Check params functions (data/object types and such)
-TODO: Parallelization
+TODO: Parallelization/Vectorization
+TODO: Ensure inputs are converted to numpy arrays
 """
-from abc import ABC, abstractmethod
-from utils.validation import check_feature_names, check_inputs, check_measure
-from ._visualization import BaseVisualization
+import numpy as np
+from sklearn.utils import check_random_state
+from .utils import check_feature_names, check_inputs, check_measure, check_qoi
+from .visualization._visualization import ShaRPViz
 
 
-class BaseQII(ABC):
+class ShaRP:
     """
-    This is a base class, serves as a template for QII objects. It should not be called
-    directly.
+    Explains the contributions of features to different aspects of a ranked outcome,
+    based on Shapley values.
+
+    This algorithm is an implementation of Shapley for Rankings and Preferences (ShaRP),
+    as presented in [1]_.
+
+    If QoI is None, ``target_function`` and parameters ``X`` and ``y`` need to be passed.
+    if QoI is not None, ``target_function`` is ignored.
 
     Parameters
     ----------
     estimator : ML classifier
+
     qoi : Quantity of interest
-    X : reference input
-    y : target
+
     measure : measure used to estimate feature contributions (unary, set, banzhaf, etc.)
+
     sample_size : amount of perturbations applied per data point
+
     predict_method : estimator's function that provides inference
+
     random_state : random seed
+
+    X : reference input
+
+    y : target
+
+    Attributes
+    ----------
+    TODO
+
+    Notes
+    -----
+    See the original paper: [1]_ for more details.
+
+    References
+    ----------
+    .. [1] V. Pliatsika, J. Fonseca, T. Wang, J. Stoyanovich, "ShaRP: Explaining
+       Rankings with Shapley Values", Under submission.
     """
 
     def __init__(
         self,
-        estimator,
-        qoi,
-        X=None,  # NOTE: might be removed
-        y=None,
-        measure="unary",
-        sample_size=32,  # TODO: Set to None and predefine according to QII paper!
-        predict_method="predict",
+        qoi=None,
+        target_function=None,
+        measure="shapley",
+        sample_size=32,
         random_state=None,
+        **kwargs
     ):
-        self.estimator = estimator
         self.qoi = qoi
-        self._X = X
-        self._y = y
+        self.target_function = target_function
         self.measure = measure
         self.sample_size = sample_size
-        self.predict_method = predict_method
         self.random_state = random_state
-        self.plot = BaseVisualization()
+        self.plot = ShaRPViz(self)
+        self._X = kwargs["X"] if "X" in kwargs.keys() else None
+        self._y = kwargs["y"] if "y" in kwargs.keys() else None
 
-    def _predict(self, X):
-        if hasattr(self.estimator, self.predict_method):
-            return getattr(self.estimator, self.predict_method)(X)
-        else:
-            raise AttributeError("Attribute bla bla not found")  # TODO
+    def _check_params(self, X, y):  # TODO: refactor _check_params
+        if X is None:
+            X = self._X
+
+        if y is None:
+            y = self._y
+
+        feature_names = check_feature_names(X)
+
+        X_, y_ = check_inputs(X, y)
+        measure_ = check_measure(self.measure)
+        qoi_ = check_qoi(
+            self.qoi,
+            target_function=self.target_function,
+            X=X_,
+        )
+
+        if not hasattr(self, "_rng"):
+            self._rng = check_random_state(self.random_state)
+
+        return feature_names, X_, y_, measure_, qoi_
 
     def get_params(self):
         pass  # TODO
@@ -70,40 +109,90 @@ class BaseQII(ABC):
     def set_params(self):
         pass  # TODO
 
-    @abstractmethod
-    def individual(self, X=None, y=None):
-        pass
+    def individual(self, sample, X=None, y=None, **kwargs):
+        """
+        set_cols_idx should be passed in kwargs if measure is marginal
+        """
+        feature_names, X_, y_, measure_, qoi_ = self._check_params(X, y)
 
-    @abstractmethod
-    def all(self, X=None, y=None):
-        pass
+        if "set_cols_idx" in kwargs.keys():
+            set_cols_idx = kwargs["set_cols_idx"]
+        else:
+            set_cols_idx = None
 
+        if isinstance(sample, int):
+            sample = X_[sample]
 
-class TabularQII(BaseQII):
-    """
-    QII object for classification tasks over tabular data.
-    """
+        influences = []
+        for col_idx in range(len(feature_names)):
+            cell_influence = measure_(
+                row=sample,
+                col_idx=col_idx,
+                set_cols_idx=set_cols_idx,
+                X=X_,
+                qoi=qoi_,
+                sample_size=self.sample_size,
+                rng=self._rng,
+            )
+            influences.append(cell_influence)
+        return influences
 
-    def _check_params(self, X, y):
-        if self._X is not None:
-            reference_X_ = self._X
-            f_ = check_feature_names(reference_X_)
+    def feature(self, feature, X=None, y=None, **kwargs):
+        """
+        set_cols_idx should be passed in kwargs if measure is marginal
+        """
+        feature_names, X_, y_, measure_, qoi_ = self._check_params(X, y)
+        col_idx = feature_names.index(feature) if type(feature) is str else feature
 
-        feature_names = check_feature_names(X)
-        if f_ != feature_names:
-            raise KeyError("Features in reference X and target X do not match.")
+        if "set_cols_idx" in kwargs.keys():
+            set_cols_idx = kwargs["set_cols_idx"]
+        else:
+            set_cols_idx = None
 
-        tested_X_ = check_inputs(X)
-        measure_ = check_measure(self.measure)
+        influences = []
+        for sample_idx in range(X_.shape[0]):
+            sample = X_[sample_idx]
+            cell_influence = measure_(
+                row=sample,
+                col_idx=col_idx,
+                set_cols_idx=set_cols_idx,
+                X=X_,
+                qoi=qoi_,
+                sample_size=self.sample_size,
+                rng=self._rng,
+            )
+            influences.append(cell_influence)
 
-        return feature_names, reference_X_, tested_X_, measure_
+        return np.mean(influences)
 
-    def individual(self, X=None, y=None):
-        feature_names, reference_X_, X_, measure_ = self._check_params(X, y)
-        X
+    def all(self, X=None, y=None, **kwargs):
+        """
+        set_cols_idx should be passed in kwargs if measure is marginal
+        """
+        X_, y_ = check_inputs(X, y)
 
-    def feature(self, feature, X=None, y=None):
-        feature_names, reference_X_, X_, measure_ = self._check_params(X, y)
+        influences = []
+        for sample_idx in range(X_.shape[0]):
+            individual_influence = self.individual(sample_idx, X_, **kwargs)
+            influences.append(individual_influence)
 
-    def all(self, X=None, y=None):
-        X = check_inputs(X)
+        return np.array(influences)
+
+    def pairwise(self, sample1, sample2, **kwargs):
+        """
+        Compare two samples, or one sample against a set of samples.
+
+        set_cols_idx should be passed in kwargs if measure is marginal
+        """
+        if "X" in kwargs.keys():
+            X = kwargs["X"]
+
+            if type(sample1) in [int, list]:
+                sample1 = X[sample1]
+
+            if type(sample2) in [int, list]:
+                sample2 = X[sample2]
+
+        sample2 = sample2.reshape(1, -1) if sample2.ndim == 1 else sample2
+
+        return self.individual(sample1, X=sample2, **kwargs)

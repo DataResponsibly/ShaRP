@@ -8,7 +8,9 @@ outcome, based on Shapley values.
 
 Subpackages
 -----------
-**TODO**
+qoi
+utils
+visualization
 """
 import sys
 
@@ -29,7 +31,6 @@ else:
     # from . import utils
 
     from ._version import __version__
+    from .base import ShaRP
 
-    __all__ = [
-        "__version__",
-    ]
+    __all__ = ["__version__", "ShaRP"]
