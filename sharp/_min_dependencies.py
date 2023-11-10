@@ -3,12 +3,14 @@ import argparse
 
 NUMPY_MIN_VERSION = "1.20.0"
 PANDAS_MIN_VERSION = "1.3.5"
+SKLEARN_MIN_VERSION = "1.2.0"
 MATPLOTLIB_MIN_VERSION = "2.2.3"
 
 # The values are (version_spec, comma separated tags)
 dependent_packages = {
     "numpy": (NUMPY_MIN_VERSION, "install"),
     "pandas": (PANDAS_MIN_VERSION, "install"),
+    "scikit-learn": (SKLEARN_MIN_VERSION, "install"),
     "matplotlib": (MATPLOTLIB_MIN_VERSION, "optional"),
     #  "ml-research": ("0.4.2", "optional"),
     "pytest-cov": ("3.0.0", "tests"),

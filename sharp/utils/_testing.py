@@ -9,17 +9,17 @@ from pathlib import Path
 
 from operator import itemgetter
 
+from sklearn.base import BaseEstimator
 from sklearn.utils._testing import ignore_warnings
-from sharp.qoi.base import BaseQoI
 
 
-def all_qois(
+def all_elements(
     type_filter=None,
 ):
-    """Get a list of all Quantities of Interest from ShaRP.
+    """Get a list of all Quantities of Interest and ShaRP from this library.
 
     This function crawls the module and gets all classes that inherit
-    from BaseQoI. Classes that are defined in test-modules are not
+    from BaseEstimator. Classes that are defined in test-modules are not
     included.
     By default meta_estimators are also not included.
     This function is adapted from imblearn.
@@ -29,7 +29,7 @@ def all_qois(
     type_filter : str, list of str, or None, default=None
         Which kind of estimators should be returned. If None, no
         filter is applied and all estimators are returned.  Possible
-        values are 'sampler' to get estimators only of these specific
+        values are 'qoi' to get estimators only of these specific
         types, or a list of these to get the estimators that fit at
         least one of the types.
 
@@ -39,7 +39,7 @@ def all_qois(
         List of (name, class), where ``name`` is the class name as string
         and ``class`` is the actual type of the class.
     """
-    from imblearn.base import SamplerMixin
+    from sharp.qoi.base import BaseQoI
 
     def is_abstract(c):
         if not (hasattr(c, "__abstractmethods__")):
@@ -71,7 +71,9 @@ def all_qois(
     all_classes = set(all_classes)
 
     estimators = [
-        c for c in all_classes if (issubclass(c[1], BaseQoI) and c[0] != "BaseQoI")
+        c
+        for c in all_classes
+        if (issubclass(c[1], BaseEstimator) and c[0] != "BaseQoI")
     ]
     # get rid of abstract base classes
     estimators = [c for c in estimators if not is_abstract(c[1])]
@@ -85,7 +87,7 @@ def all_qois(
         else:
             type_filter = list(type_filter)  # copy
         filtered_estimators = []
-        filters = {"sampler": SamplerMixin}
+        filters = {"qoi": BaseQoI}
         for name, mixin in filters.items():
             if name in type_filter:
                 type_filter.remove(name)

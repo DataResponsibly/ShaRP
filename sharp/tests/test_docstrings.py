@@ -22,8 +22,7 @@ from sklearn.utils.deprecation import _is_deprecated
 
 import sharp
 from sharp.qoi.base import BaseQoI
-from sharp.utils._testing import all_qois
-from sharp import ShaRP
+from sharp.utils._testing import all_elements
 
 
 def is_qoi(estimator):
@@ -48,11 +47,11 @@ def is_qoi(estimator):
 # FutureWarnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", FutureWarning)
-    imblearn_path = sharp.__path__
+    sharp_path = sharp.__path__
     PUBLIC_MODULES = set(
         [
             pckg[1]
-            for pckg in walk_packages(prefix="sharp.", path=imblearn_path)
+            for pckg in walk_packages(prefix="sharp.", path=sharp_path)
             if not ("._" in pckg[1] or ".tests." in pckg[1])
         ]
     )
@@ -177,7 +176,7 @@ def _construct_compose_pipeline_instance(Estimator):
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
-@pytest.mark.parametrize("name, Obj", [("ShaRP", ShaRP)] + all_qois())
+@pytest.mark.parametrize("name, Obj", all_elements())
 def test_fit_docstring_attributes(name, Obj):
     pytest.importorskip("numpydoc")
     from numpydoc import docscrape
