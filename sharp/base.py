@@ -15,12 +15,13 @@ TODO: Parallelization/Vectorization
 TODO: Ensure inputs are converted to numpy arrays
 """
 import numpy as np
+from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from .utils import check_feature_names, check_inputs, check_measure, check_qoi
 from .visualization._visualization import ShaRPViz
 
 
-class ShaRP:
+class ShaRP(BaseEstimator):
     """
     Explains the contributions of features to different aspects of a ranked outcome,
     based on Shapley values.
@@ -51,7 +52,6 @@ class ShaRP:
 
     Attributes
     ----------
-    TODO
 
     Notes
     -----
@@ -102,12 +102,6 @@ class ShaRP:
             self._rng = check_random_state(self.random_state)
 
         return feature_names, X_, y_, measure_, qoi_
-
-    def get_params(self):
-        pass  # TODO
-
-    def set_params(self):
-        pass  # TODO
 
     def individual(self, sample, X=None, y=None, **kwargs):
         """

@@ -1,9 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import numpy as np
+from sklearn.base import BaseEstimator
 from sharp.utils._rank_utils import scores_to_rank
 
 
-class BaseQoI(ABC):
+class BaseQoI(BaseEstimator, metaclass=ABCMeta):
     """
     Base class to implement Quantities of Interest (QoI) for classification or regression
     tasks. It should not be used directly. Any QoI must define at least 2 functions:
@@ -24,7 +25,7 @@ class BaseQoI(ABC):
 
     _qoi_type = "score"
 
-    def __init__(self, target_function):
+    def __init__(self, target_function=None):
         # NOTE: This parameter name is not descriptive enough
         self.target_function = target_function
 
@@ -73,7 +74,7 @@ class BaseQoI(ABC):
         pass
 
 
-class BaseRankingQoI(BaseQoI, ABC):
+class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
     """
     Base class to implement Quantities of Interest (QoI) for ranking tasks. It should not
     be used directly. Any QoI must define at least 2 functions:
@@ -97,7 +98,7 @@ class BaseRankingQoI(BaseQoI, ABC):
 
     _qoi_type = "rank"
 
-    def __init__(self, target_function, X=None):
+    def __init__(self, target_function=None, X=None):
         # NOTE: This parameter name is not descriptive enough
         self.target_function = target_function
         self.X = X

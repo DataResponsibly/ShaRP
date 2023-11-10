@@ -20,8 +20,7 @@ def score_function(X):
 
 
 X = np.concatenate(
-    [rng.normal(size=(N_SAMPLES, 1)), rng.binomial(1, .5, size=(N_SAMPLES, 1))],
-    axis=1
+    [rng.normal(size=(N_SAMPLES, 1)), rng.binomial(1, 0.5, size=(N_SAMPLES, 1))], axis=1
 )
 y = score_function(X)
 
@@ -29,7 +28,7 @@ xai = ShaRP(
     qoi="ranking",
     target_function=score_function,
     measure="shapley",
-    random_state=RNG_SEED
+    random_state=RNG_SEED,
 )
 
 # Feature importance (single feature)

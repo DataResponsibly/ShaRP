@@ -126,7 +126,7 @@ class TopKQoI(BaseRankingQoI):
         The number of items to consider as part of the top-ranked group.
     """
 
-    def __init__(self, target_function, top_k=10, X=None):
+    def __init__(self, target_function=None, top_k=10, X=None):
         super().__init__(target_function=target_function, X=X)
         self.top_k = top_k
 
