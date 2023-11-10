@@ -50,9 +50,6 @@ class ShaRP(BaseEstimator):
 
     y : target
 
-    Attributes
-    ----------
-
     Notes
     -----
     See the original paper: [1]_ for more details.
