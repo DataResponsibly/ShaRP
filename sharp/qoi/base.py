@@ -25,9 +25,10 @@ class BaseQoI(BaseEstimator, metaclass=ABCMeta):
 
     _qoi_type = "score"
 
-    def __init__(self, target_function=None):
+    def __init__(self, target_function=None, X=None):
         # NOTE: This parameter name is not descriptive enough
         self.target_function = target_function
+        self.X = X
 
     def estimate(self, rows):
         """
@@ -97,11 +98,6 @@ class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
     """
 
     _qoi_type = "rank"
-
-    def __init__(self, target_function=None, X=None):
-        # NOTE: This parameter name is not descriptive enough
-        self.target_function = target_function
-        self.X = X
 
     def rank(self, X, X_base=None):
         """
