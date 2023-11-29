@@ -100,6 +100,9 @@ class ShaRP(BaseEstimator):
         """
         set_cols_idx should be passed in kwargs if measure is marginal
         """
+        if X is None:
+            X = self.qoi_.X
+
         X_, y_ = check_inputs(X, y)
 
         if "set_cols_idx" in kwargs.keys():
