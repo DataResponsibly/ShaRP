@@ -25,6 +25,7 @@ dependent_packages = {
     "sphinxawesome-theme": ("5.0.0", "docs"),
     "recommonmark": ("0.7.1", "docs"),
     "sphinx-markdown-tables": ("0.0.17", "docs"),
+    "sphinx-gallery": ("0.15.0", "docs"),
 }
 
 
