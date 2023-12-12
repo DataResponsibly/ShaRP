@@ -22,11 +22,9 @@ dependent_packages = {
     "coverage": ("6.2", "tests"),
     "sphinx": ("4.2.0", "docs"),
     "numpydoc": ("1.0.0", "docs, tests"),
-    #  "sphinx-material": ("0.0.35", "docs"),
-    #  "nbsphinx": ("0.8.7", "docs"),
-    #  "recommonmark": ("0.7.1", "docs"),
-    #  "sphinx-markdown-tables": ("0.0.15", "docs"),
-    #  "sphinx-copybutton": ("0.4.0", "docs"),
+    "sphinxawesome-theme": ("5.0.0", "docs"),
+    "recommonmark": ("0.7.1", "docs"),
+    "sphinx-markdown-tables": ("0.0.17", "docs"),
 }
 
 
