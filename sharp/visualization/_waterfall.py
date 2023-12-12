@@ -1,8 +1,7 @@
 import re
 import pandas as pd
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
+from sharp.utils._utils import _optional_import
 
 # from sharp.utils import scores_to_rank
 
@@ -25,6 +24,9 @@ def format_value(s, format_str):
 
 
 def _waterfall(shap_values, max_display=10, show=False):  # noqa
+    matplotlib = _optional_import("matplotlib")
+    plt = _optional_import("matplotlib.pyplot")
+
     # Turn off interactive plot
     if show is False:
         plt.ioff()
