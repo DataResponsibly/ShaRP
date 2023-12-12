@@ -28,11 +28,7 @@ def score_function(X):
 # distribution, another from a bernoulli.
 
 X = np.concatenate(
-    [
-        rng.normal(size=(N_SAMPLES, 1)),
-        rng.binomial(1, 0.5, size=(N_SAMPLES, 1))
-    ],
-    axis=1
+    [rng.normal(size=(N_SAMPLES, 1)), rng.binomial(1, 0.5, size=(N_SAMPLES, 1))], axis=1
 )
 y = score_function(X)
 
@@ -53,31 +49,16 @@ xai.fit(X)
 ######################################################################################
 # Let's take a look at some shapley values used for ranking explanations:
 
-print(
-    "Global contribution of a single feature:",
-    xai.feature(0, X)
-)
-print(
-    "Global feature contributions:",
-    xai.all(X).mean(axis=0)
-)
+print("Global contribution of a single feature:", xai.feature(0, X))
+print("Global feature contributions:", xai.all(X).mean(axis=0))
 
 individual_scores = xai.individual(9, X)
-print(
-    "Feature contributions to a single observation: ",
-    individual_scores
-)
+print("Feature contributions to a single observation: ", individual_scores)
 
 pair_scores = xai.pairwise(X[2], X[3])
-print(
-    "Pairwise comparison (one vs one):",
-    pair_scores
-)
+print("Pairwise comparison (one vs one):", pair_scores)
 
-print(
-    "Pairwise comparison (one vs group):",
-    xai.pairwise(X[2], X[5:10])
-)
+print("Pairwise comparison (one vs group):", xai.pairwise(X[2], X[5:10]))
 
 
 ######################################################################################
