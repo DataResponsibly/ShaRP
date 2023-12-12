@@ -1,4 +1,4 @@
-""".
+"""
 Implementation of the ShaRP algorithm (Shapley for Rankings and Preferences).
 
 ``sharp`` is a library containing the implementation of the ShaRP
