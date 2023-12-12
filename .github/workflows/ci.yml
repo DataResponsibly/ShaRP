@@ -62,7 +62,7 @@ jobs:
 
       - name: Test Docs
         run: |
-          cd docs
+          cd doc
           make html
 
       - name: Upload coverage to codecov
