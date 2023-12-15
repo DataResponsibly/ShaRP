@@ -124,12 +124,13 @@ class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
             X_base = self.X
 
         # calculate scores to get rankings for
-        scores = self.target_function(X)
-
         scores_base = self.target_function(X_base)
-        scores_all = np.concatenate([scores_base, scores])
+        ranks_all = []
+        for row in X:
+            scores = self.target_function(row.reshape(1, -1))
+            scores_all = np.concatenate([scores_base, scores])
+            ranks = scores_to_rank(scores_all)
+            rank = ranks[scores_base.shape[0] :]
+            ranks_all.append(rank)
 
-        ranks = scores_to_rank(scores_all)
-        ranks = ranks[scores_base.shape[0] :]
-
-        return ranks
+        return np.array(ranks_all)
