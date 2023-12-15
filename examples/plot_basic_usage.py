@@ -4,8 +4,8 @@ Basic usage
 
 This example shows a simple application of ShaRP over a toy dataset.
 
-We'll start by setting up the imports, envrironment variables and a basic score function
-that will be used to determine rankings.
+We will start by setting up the imports, envrironment variables and a basic score
+function that will be used to determine rankings.
 """
 
 import numpy as np
@@ -40,8 +40,9 @@ xai = ShaRP(
     qoi="ranking",
     target_function=score_function,
     measure="shapley",
+    sample_size=None,
+    replace=False,
     random_state=RNG_SEED,
-    sample_size=49,
 )
 xai.fit(X)
 
