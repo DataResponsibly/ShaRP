@@ -6,7 +6,7 @@ from math import comb
 from itertools import combinations
 
 
-def _set(row, col_idx, X, qoi, sample_size, rng, **kwargs):
+def _set(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     """
     Calculates the QII for a single or set of attributes in a single row.
 
@@ -34,7 +34,7 @@ def _set(row, col_idx, X, qoi, sample_size, rng, **kwargs):
     """
 
     # Draw new samples uniformly at random
-    X_sampled = rng.choice(X, size=sample_size, replace=True)
+    X_sampled = rng.choice(X, size=sample_size, replace=replace)
 
     # Unary/Set approach
     X_modded = np.repeat(row.reshape(1, -1), repeats=sample_size, axis=0)
@@ -44,7 +44,7 @@ def _set(row, col_idx, X, qoi, sample_size, rng, **kwargs):
     return qoi.calculate(row, X_modded)
 
 
-def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, rng, **kwargs):
+def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, replace, rng, **kwargs):
     """
     Calculates the marginal QII for a single or set of attributes in a single row.
 
@@ -67,7 +67,7 @@ def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, rng, **kwargs):
           -- how this attribute contribute to the machine.
     """
     # Draw new samples uniformly at random
-    X_sampled = X[rng.choice(np.arange(X.shape[0]), size=sample_size, replace=True)]
+    X_sampled = X[rng.choice(np.arange(X.shape[0]), size=sample_size, replace=replace)]
 
     # Marginal approach
     X_modded1 = np.repeat(row.reshape(1, -1), repeats=sample_size, axis=0)
@@ -85,7 +85,7 @@ def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, rng, **kwargs):
     return qoi.calculate(X_modded1, X_modded2)
 
 
-def _shapley(row, col_idx, X, qoi, sample_size, rng, **kwargs):
+def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -130,6 +130,7 @@ def _shapley(row, col_idx, X, qoi, sample_size, rng, **kwargs):
             X=X,
             qoi=qoi,
             sample_size=sample_size,
+            replace=replace,
             rng=rng,
         )
         total_score += score / (comb(X.shape[1] - 1, len(set_cols_idx)) * X.shape[1])
@@ -137,7 +138,7 @@ def _shapley(row, col_idx, X, qoi, sample_size, rng, **kwargs):
     return total_score
 
 
-def _banzhaff(row, col_idx, X, qoi, sample_size, rng, **kwargs):
+def _banzhaff(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -181,6 +182,7 @@ def _banzhaff(row, col_idx, X, qoi, sample_size, rng, **kwargs):
             X=X,
             qoi=qoi,
             sample_size=sample_size,
+            replace=replace,
             rng=rng,
         )
         total_score += score / 2 ** (X.shape[1] - 1)
