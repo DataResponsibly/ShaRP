@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 from sklearn.base import BaseEstimator
-from sharp.utils._rank_utils import scores_to_rank
 
 
 class BaseQoI(BaseEstimator, metaclass=ABCMeta):
@@ -127,10 +126,8 @@ class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
         scores_base = self.target_function(X_base)
         ranks_all = []
         for row in X:
-            scores = self.target_function(row.reshape(1, -1))
-            scores_all = np.concatenate([scores_base, scores])
-            ranks = scores_to_rank(scores_all)
-            rank = ranks[scores_base.shape[0] :]
+            score = self.target_function(row.reshape(1, -1))[0]
+            rank = (scores_base > score).sum() + 1
             ranks_all.append(rank)
 
         return np.array(ranks_all)

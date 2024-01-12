@@ -119,7 +119,7 @@ def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
         set_cols_idx
-        for set_size in range(1, len(rest_cols_idx) + 1)
+        for set_size in range(0, len(rest_cols_idx) + 1)
         for set_cols_idx in combinations(rest_cols_idx, set_size)
     ]
     for set_cols_idx in iterable:
