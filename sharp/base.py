@@ -42,6 +42,8 @@ class ShaRP(BaseEstimator):
 
     sample_size : amount of perturbations applied per data point
 
+    replace : Whether to sample with replacement
+
     predict_method : estimator's function that provides inference
 
     random_state : random seed
@@ -65,7 +67,8 @@ class ShaRP(BaseEstimator):
         qoi=None,
         target_function=None,
         measure="shapley",
-        sample_size=32,
+        sample_size=None,
+        replace=False,
         random_state=None,
         **kwargs
     ):
@@ -73,6 +76,7 @@ class ShaRP(BaseEstimator):
         self.target_function = target_function
         self.measure = measure
         self.sample_size = sample_size
+        self.replace = replace
         self.random_state = random_state
         self.plot = ShaRPViz(self)
         self._X = kwargs["X"] if "X" in kwargs.keys() else None
@@ -113,6 +117,13 @@ class ShaRP(BaseEstimator):
         if isinstance(sample, int):
             sample = X_[sample]
 
+        if "sample_size" in kwargs.keys():
+            sample_size = kwargs["sample_size"]
+        elif self.sample_size is not None:
+            sample_size = self.sample_size
+        else:
+            sample_size = X_.shape[0]
+
         influences = []
         for col_idx in range(len(self.feature_names_)):
             cell_influence = self.measure_(
@@ -121,7 +132,8 @@ class ShaRP(BaseEstimator):
                 set_cols_idx=set_cols_idx,
                 X=X_,
                 qoi=self.qoi_,
-                sample_size=self.sample_size,
+                sample_size=sample_size,
+                replace=self.replace,
                 rng=self._rng,
             )
             influences.append(cell_influence)
@@ -142,6 +154,13 @@ class ShaRP(BaseEstimator):
         else:
             set_cols_idx = None
 
+        if "sample_size" in kwargs.keys():
+            sample_size = kwargs["sample_size"]
+        elif self.sample_size is not None:
+            sample_size = self.sample_size
+        else:
+            sample_size = X_.shape[0]
+
         influences = []
         for sample_idx in range(X_.shape[0]):
             sample = X_[sample_idx]
@@ -151,7 +170,8 @@ class ShaRP(BaseEstimator):
                 set_cols_idx=set_cols_idx,
                 X=X_,
                 qoi=self.qoi_,
-                sample_size=self.sample_size,
+                sample_size=sample_size,
+                replace=self.replace,
                 rng=self._rng,
             )
             influences.append(cell_influence)
@@ -190,4 +210,15 @@ class ShaRP(BaseEstimator):
 
         sample2 = sample2.reshape(1, -1) if sample2.ndim == 1 else sample2
 
-        return self.individual(sample1, X=sample2, **kwargs)
+        if "sample_size" in kwargs.keys():
+            sample_size = kwargs["sample_size"]
+        elif self.sample_size is not None:
+            sample_size = (
+                sample2.shape[0]
+                if self.sample_size > sample2.shape[0]
+                else self.sample_size
+            )
+        else:
+            sample_size = sample2.shape[0]
+
+        return self.individual(sample1, X=sample2, sample_size=sample_size, **kwargs)
