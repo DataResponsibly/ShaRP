@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 from sklearn.base import BaseEstimator
-from sharp.utils._rank_utils import scores_to_rank
 
 
 class BaseQoI(BaseEstimator, metaclass=ABCMeta):
