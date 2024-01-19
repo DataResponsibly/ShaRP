@@ -17,6 +17,7 @@ TODO: Ensure inputs are converted to numpy arrays
 import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
+from mlresearch.utils import parallel_loop
 from .utils import check_feature_names, check_inputs, check_measure, check_qoi
 from .visualization._visualization import ShaRPViz
 
@@ -70,6 +71,8 @@ class ShaRP(BaseEstimator):
         sample_size=None,
         replace=False,
         random_state=None,
+        n_jobs=1,
+        verbose=0,
         **kwargs
     ):
         self.qoi = qoi
@@ -78,6 +81,8 @@ class ShaRP(BaseEstimator):
         self.sample_size = sample_size
         self.replace = replace
         self.random_state = random_state
+        self.n_jobs = n_jobs
+        self.verbose = verbose
         self.plot = ShaRPViz(self)
         self._X = kwargs["X"] if "X" in kwargs.keys() else None
         self._y = kwargs["y"] if "y" in kwargs.keys() else None
@@ -184,10 +189,12 @@ class ShaRP(BaseEstimator):
         """
         X_, y_ = check_inputs(X, y)
 
-        influences = []
-        for sample_idx in range(X_.shape[0]):
-            individual_influence = self.individual(sample_idx, X_, **kwargs)
-            influences.append(individual_influence)
+        influences = parallel_loop(
+            lambda sample_idx: self.individual(sample_idx, X_, **kwargs),
+            range(X_.shape[0]),
+            n_jobs=self.n_jobs,
+            progress_bar=self.verbose,
+        )
 
         return np.array(influences)
 
