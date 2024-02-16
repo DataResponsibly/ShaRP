@@ -18,15 +18,13 @@ Some functions require Matplotlib (>= 2.2.3) for plotting.
 
 ### User Installation
 
-**NOTE: DO NOT USE THIS METHOD. IT IS NOT IMPLEMENTED YET**
-
 The easiest way to install ml-research is using ``pip`` :
 
-    pip install -U sharp
+    pip install -U xai-sharp
 
 Or ``conda`` :
 
-    conda install -c conda-forge sharp
+    conda install -c conda-forge xai-sharp
 
 The documentation includes more detailed [installation
 instructions](https://sharp.readthedocs.io/en/latest/getting-started.html).
@@ -37,7 +35,7 @@ The following commands should allow you to setup the development version of the
 project with minimal effort:
 
     # Clone the project.
-    git clone https://github.com/joaopfonseca/sharp.git
+    git clone https://github.com/DataResponsibly/sharp.git
     cd sharp
 
     # Create and activate an environment 
