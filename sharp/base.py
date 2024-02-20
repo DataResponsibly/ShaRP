@@ -130,9 +130,9 @@ class ShaRP(BaseEstimator):
         else:
             sample_size = X_.shape[0]
 
-        influences = []
-        for col_idx in range(len(self.feature_names_)):
-            cell_influence = self.measure_(
+        verbosity = kwargs["verbose"] if "verbose" in kwargs.keys() else self.verbose
+        influences = parallel_loop(
+            lambda col_idx: self.measure_(
                 row=sample,
                 col_idx=col_idx,
                 set_cols_idx=set_cols_idx,
@@ -141,8 +141,12 @@ class ShaRP(BaseEstimator):
                 sample_size=sample_size,
                 replace=self.replace,
                 rng=self._rng,
-            )
-            influences.append(cell_influence)
+            ),
+            range(len(self.feature_names_)),
+            n_jobs=self.n_jobs,
+            progress_bar=verbosity,
+        )
+
         return influences
 
     def feature(self, feature, X=None, y=None, **kwargs):
@@ -191,7 +195,7 @@ class ShaRP(BaseEstimator):
         X_, y_ = check_inputs(X, y)
 
         influences = parallel_loop(
-            lambda sample_idx: self.individual(sample_idx, X_, **kwargs),
+            lambda sample_idx: self.individual(sample_idx, X_, verbose=False, **kwargs),
             range(X_.shape[0]),
             n_jobs=self.n_jobs,
             progress_bar=self.verbose,
