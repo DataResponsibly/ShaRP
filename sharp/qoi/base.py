@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from copy import deepcopy
 import numpy as np
 from sklearn.base import BaseEstimator
 
@@ -113,6 +114,7 @@ class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
             Rankings for all samples in ``X``.
         """
 
+        # Retrieve reference dataset and calculate scores to get rankings for
         if X_base is None and self.X is None:
             msg = (
                 "Either ``self.X`` (defined in the object initialization) or ``X_base`` "
@@ -122,8 +124,13 @@ class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
         elif X_base is None:
             X_base = self.X
 
-        # calculate scores to get rankings for
-        scores_base = self.target_function(X_base)
+            if not hasattr(self, "_scores_base"):
+                self._scores_base = self.target_function(X_base)
+
+            scores_base = deepcopy(self._scores_base)
+        else:
+            scores_base = self.target_function(X_base)
+
         ranks_all = []
         for row in X:
             score = self.target_function(row.reshape(1, -1))[0]
