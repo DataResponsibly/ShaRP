@@ -18,7 +18,7 @@ TODO: Ensure inputs are converted to numpy arrays
 import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
-from mlresearch.utils import parallel_loop
+from .utils._parallelize import parallel_loop
 from .utils import check_feature_names, check_inputs, check_measure, check_qoi
 from .visualization._visualization import ShaRPViz
 
