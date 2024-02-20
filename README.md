@@ -15,6 +15,7 @@ project. ``ShaRP`` requires:
 - numpy (>= 1.20.0)
 - pandas (>= 1.3.5)
 - scikit-learn (>= 1.2.0)
+- ml-research (>= 0.4.2)
 
 Some functions require Matplotlib (>= 2.2.3) for plotting.
 
