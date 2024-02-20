@@ -1,5 +1,7 @@
 # ShaRP
 
+[![Documentation](https://github.com/DataResponsibly/ShaRP/actions/workflows/deploy-docs.yml/badge.svg)](https://dataresponsibly.github.io/ShaRP/)
+
 ``ShaRP`` is an open source library with the implementation of the ShaRP
 algorithm (Shapley for Rankings and Preferences), a framework that can be used
 to explain the contributions of features to different aspects of a ranked
@@ -18,7 +20,7 @@ Some functions require Matplotlib (>= 2.2.3) for plotting.
 
 ### User Installation
 
-The easiest way to install ml-research is using ``pip`` :
+The easiest way to install ``sharp`` is using ``pip`` :
 
     pip install -U xai-sharp
 
@@ -45,3 +47,14 @@ project with minimal effort:
     # Install project requirements and the research package. Dependecy group
     # "all" will also install the dependency groups shown below.
     pip install .[optional,tests,docs] 
+
+## Citing ShaRP
+
+If you use ``sharp`` in a scientific publication, we would appreciate citations to the following paper:
+
+    @article{pliatsika2024sharp,
+      title={ShaRP: Explaining Rankings with Shapley Values},
+      author={Pliatsika, Venetia and Fonseca, Joao and Wang, Tilun and Stoyanovich, Julia},
+      journal={arXiv preprint arXiv:2401.16744},
+      year={2024}
+    }
