@@ -72,7 +72,7 @@ class LikelihoodQoI(BaseQoI):
     """
 
     def _estimate(self, rows):
-        y_pred = self.target_function(rows).squeeze()
+        y_pred = self.target_function(rows)  # .squeeze()
         y_pred_mean = (y_pred if y_pred.ndim == 1 else y_pred[:, -1]).mean()
         return y_pred_mean
 
