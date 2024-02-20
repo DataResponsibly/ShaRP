@@ -1,4 +1,5 @@
 """All minimum dependencies for sharp."""
+
 import argparse
 
 NUMPY_MIN_VERSION = "1.20.0"

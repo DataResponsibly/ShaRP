@@ -1,6 +1,7 @@
 """
 Quantitative Input Influence measures.
 """
+
 import numpy as np
 from math import comb
 from itertools import combinations

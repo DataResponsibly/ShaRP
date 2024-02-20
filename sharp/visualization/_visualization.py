@@ -3,6 +3,7 @@ Object where visualizations will be added.
 
 NOTE: Matplotlib only. Must be an optional import.
 """
+
 import pandas as pd
 from sharp.utils._utils import _optional_import
 from ._waterfall import _waterfall
