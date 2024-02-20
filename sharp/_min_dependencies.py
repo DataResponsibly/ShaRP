@@ -1,4 +1,5 @@
 """All minimum dependencies for sharp."""
+
 import argparse
 
 NUMPY_MIN_VERSION = "1.20.0"
@@ -13,7 +14,7 @@ dependent_packages = {
     "pandas": (PANDAS_MIN_VERSION, "install"),
     "scikit-learn": (SKLEARN_MIN_VERSION, "install"),
     "ml-research": (MLRESEARCH_MIN_VERSION, "install"),
-    "matplotlib": (MATPLOTLIB_MIN_VERSION, "optional"),
+    "matplotlib": (MATPLOTLIB_MIN_VERSION, "optional, docs"),
     "pytest-cov": ("3.0.0", "tests"),
     "flake8": ("3.8.2", "tests"),
     "black": ("22.3", "tests"),

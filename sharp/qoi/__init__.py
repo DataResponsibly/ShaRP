@@ -1,6 +1,7 @@
 """
 Quantities of interest.
 """
+
 from ._qoi import (
     DiffQoI,
     FlipQoI,

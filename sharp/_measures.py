@@ -1,6 +1,7 @@
 """
 Quantitative Input Influence measures.
 """
+
 import numpy as np
 from math import comb
 from itertools import combinations
@@ -34,14 +35,14 @@ def _set(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     """
 
     # Draw new samples uniformly at random
-    X_sampled = rng.choice(X, size=sample_size, replace=replace)
+    X_sampled = X[rng.choice(np.arange(X.shape[0]), size=sample_size, replace=replace)]
 
     # Unary/Set approach
     X_modded = np.repeat(row.reshape(1, -1), repeats=sample_size, axis=0)
     X_modded[:, col_idx] = X_sampled[:, col_idx]
 
     # Return score
-    return qoi.calculate(row, X_modded)
+    return qoi.calculate(row.reshape(1, -1), X_modded)
 
 
 def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, replace, rng, **kwargs):

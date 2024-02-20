@@ -12,6 +12,7 @@ qoi
 utils
 visualization
 """
+
 import sys
 
 try:

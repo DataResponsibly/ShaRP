@@ -14,6 +14,7 @@ TODO: Check params functions (data/object types and such)
 TODO: Parallelization/Vectorization
 TODO: Ensure inputs are converted to numpy arrays
 """
+
 import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state

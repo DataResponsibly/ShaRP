@@ -1,0 +1,79 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  # Build job
+  build:
+    name: Build
+    # At a minimum this job should upload artifacts using actions/upload-pages-artifact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+          architecture: x64
+
+      - name: Install
+        run: |
+          # NOTE: pip, setuptools and wheel should be included with any python 
+          #       installation. It's being installed/upgraded here because the 
+          #       setup-python action is not including setuptools with Python 3.12
+          pip install --upgrade pip setuptools wheel
+          pip install .[docs]
+
+      - name: Build Docs
+        run: |
+          cd doc
+          make html
+
+      - name: Archive artifact
+        run: |
+          tar \
+            --dereference --hard-dereference \
+            --directory "$INPUT_PATH" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
+        env:
+          INPUT_PATH: "doc/_build/html/"
+
+      - name: Upload artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          if-no-files-found: error
+
+  # Deploy job
+  deploy:
+    name: Deploy
+    # Add a dependency to the build job
+    needs: build
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: ShaRP
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
