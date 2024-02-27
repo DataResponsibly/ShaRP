@@ -37,7 +37,7 @@ y = score_function(X)
 # Next, we will set up ``ShaRP``:
 
 xai = ShaRP(
-    qoi="ranking",
+    qoi="rank",
     target_function=score_function,
     measure="shapley",
     sample_size=None,
@@ -50,8 +50,8 @@ xai.fit(X)
 ######################################################################################
 # Let's take a look at some shapley values used for ranking explanations:
 
-print("Global contribution of a single feature:", xai.feature(0, X))
-print("Global feature contributions:", xai.all(X).mean(axis=0))
+print("Aggregate contribution of a single feature:", xai.feature(0, X))
+print("Aggregate feature contributions:", xai.all(X).mean(axis=0))
 
 individual_scores = xai.individual(9, X)
 print("Feature contributions to a single observation: ", individual_scores)
@@ -76,6 +76,6 @@ axes[0].set_title("Pairwise comparison (Sample 2 vs 3)")
 
 # Waterfall explaining rank for sample 2
 axes[1] = xai.plot.waterfall(individual_scores)
-axes[1].suptitle("Ranking explanation for Sample 9")
+axes[1].suptitle("Rank explanation for Sample 9")
 
 plt.show()

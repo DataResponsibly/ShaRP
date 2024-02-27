@@ -1,18 +1,5 @@
 """
 Base object used to set up explainability objects.
-
-Topics that must be covered:
-- Single-observation explanation
-- Global-input explanation
-  * Set qii
-  * Unary qii
-  * Marginal qii
-  * Shapley
-  * Banzhaff
-
-TODO: Check params functions (data/object types and such)
-TODO: Parallelization/Vectorization
-TODO: Ensure inputs are converted to numpy arrays
 """
 
 import numpy as np
