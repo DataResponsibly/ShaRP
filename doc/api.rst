@@ -68,4 +68,4 @@ This is the full API documentation of the `sharp` package.
     utils.check_inputs
     utils.check_measure
     utils.check_qoi
-    utils.scores_to_rank
+    utils.scores_to_ordering

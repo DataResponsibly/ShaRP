@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def scores_to_rank(y, direction=-1):
+def scores_to_ordering(y, direction=-1):
     """
     Converts an array with scores to a ranking.
 
