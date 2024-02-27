@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 from sharp.utils._utils import _optional_import
 
-# from sharp.utils import scores_to_rank
-
 
 blue_rgb = np.array([0, 0.54337757, 0.98337906])
 light_blue_rgb = np.array([127.0, 196, 252]) / 255
