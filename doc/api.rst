@@ -30,8 +30,8 @@ This is the full API documentation of the `sharp` package.
     qoi.DiffQoI
     qoi.FlipQoI
     qoi.LikelihoodQoI
-    qoi.RankingQoI
-    qoi.RankingScoreQoI
+    qoi.RankQoI
+    qoi.RankScoreQoI
     qoi.TopKQoI
 
 

@@ -75,7 +75,7 @@ class BaseQoI(BaseEstimator, metaclass=ABCMeta):
         pass
 
 
-class BaseRankingQoI(BaseQoI, metaclass=ABCMeta):
+class BaseRankQoI(BaseQoI, metaclass=ABCMeta):
     """
     Base class to implement Quantities of Interest (QoI) for ranking tasks. It should not
     be used directly. Any QoI must define at least 2 functions:

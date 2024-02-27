@@ -6,8 +6,8 @@ from ._qoi import (
     DiffQoI,
     FlipQoI,
     LikelihoodQoI,
-    RankingQoI,
-    RankingScoreQoI,
+    RankQoI,
+    RankScoreQoI,
     TopKQoI,
     QOI_OBJECTS,
 )
@@ -16,8 +16,8 @@ __all__ = [
     "DiffQoI",
     "FlipQoI",
     "LikelihoodQoI",
-    "RankingQoI",
-    "RankingScoreQoI",
+    "RankQoI",
+    "RankScoreQoI",
     "TopKQoI",
     "QOI_OBJECTS",
 ]
