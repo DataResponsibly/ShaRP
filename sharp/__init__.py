@@ -29,9 +29,19 @@ if __SHARP_SETUP__:
     # We are not importing the rest of sharp during the build
     # process, as it may not be compiled yet
 else:
-    # from . import utils
-
-    from ._version import __version__
+    from . import qoi
+    from . import visualization
+    from . import utils
     from .base import ShaRP
+    from ._version import __version__
+    from .utils._show_versions import show_versions
 
-    __all__ = ["__version__", "ShaRP"]
+    __all__ = [
+        "qoi",
+        "visualization",
+        "utils",
+        # Non-modules:
+        "ShaRP",
+        "show_versions",
+        "__version__",
+    ]
