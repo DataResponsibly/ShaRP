@@ -1,5 +1,5 @@
-import copy
-from .base import BaseQoI, BaseRankingQoI
+from .base import BaseQoI, BaseRankQoI
+
 
 
 class DiffQoI(BaseQoI):
@@ -81,9 +81,9 @@ class LikelihoodQoI(BaseQoI):
         return self.estimate(rows1) - self.estimate(rows2)  # .mean()
 
 
-class RankingQoI(BaseRankingQoI):
+class RankQoI(BaseRankQoI):
     """
-    Ranking specific QoI. Uses rank as the quantity being measured. The influence score
+    Rank specific QoI. Uses rank as the quantity being measured. The influence score
     is based on the comparison between the rank of a sample and synthetic data (based on
     the original sample). ``target_function`` should output scores.
 
@@ -99,7 +99,7 @@ class RankingQoI(BaseRankingQoI):
         return (self.estimate(rows2) - self.estimate(rows1)).mean()
 
 
-class RankingScoreQoI(BaseRankingQoI):
+class RankScoreQoI(BaseRankQoI):
     """
     A general, ranking-oriented QoI, similar to ``DiffQoI``. ``target_function`` must
     output scores.
@@ -116,9 +116,9 @@ class RankingScoreQoI(BaseRankingQoI):
         return (self.estimate(rows1) - self.estimate(rows2)).mean()
 
 
-class TopKQoI(BaseRankingQoI):
+class TopKQoI(BaseRankQoI):
     """
-    Ranking-specific QoI. Estimates the likelihood of reaching the top-K as the
+    Rank-specific QoI. Estimates the likelihood of reaching the top-K as the
     quantity of interest.
 
     Parameters
@@ -143,8 +143,8 @@ _QOI_OBJECTS = {
     "diff": DiffQoI,
     "flip": FlipQoI,
     "likelihood": LikelihoodQoI,
-    "ranking": RankingQoI,
-    "ranking_score": RankingScoreQoI,
+    "rank": RankQoI,
+    "rank_score": RankScoreQoI,
     "top_k": TopKQoI,
 }
 

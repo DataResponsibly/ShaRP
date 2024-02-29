@@ -11,7 +11,7 @@ RNG_SEED = 123
 N_SAMPLES = 50
 rng = check_random_state(RNG_SEED)
 
-rank_qois_str = ["ranking", "ranking_score", "top_k"]
+rank_qois_str = ["rank", "rank_score", "top_k"]
 rank_qois_obj = [get_qoi(qoi) for qoi in rank_qois_str]
 
 clf_qois_str = ["diff", "flip", "likelihood"]
