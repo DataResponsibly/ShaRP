@@ -9,7 +9,8 @@ from ._qoi import (
     RankQoI,
     RankScoreQoI,
     TopKQoI,
-    QOI_OBJECTS,
+    get_qoi,
+    get_qoi_names,
 )
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     "RankQoI",
     "RankScoreQoI",
     "TopKQoI",
-    "QOI_OBJECTS",
+    "get_qoi",
+    "get_qoi_names",
 ]

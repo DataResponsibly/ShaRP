@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.utils.validation import check_array, _get_feature_names
 
-from sharp.qoi import QOI_OBJECTS
+from sharp.qoi import get_qoi
 from sharp._measures import MEASURES
 
 
@@ -53,7 +53,7 @@ def check_qoi(qoi, target_function=None, X=None):
             msg = "If `qoi` is of type `str`, `target_function` cannot be None."
             raise TypeError(msg)
 
-        if QOI_OBJECTS[qoi]._qoi_type == "rank":
+        if get_qoi(qoi)._qoi_type == "rank":
             # Add dataset to list of parameters if QoI is rank-based
             params["X"] = X
 
@@ -72,5 +72,5 @@ def check_qoi(qoi, target_function=None, X=None):
     else:
         return qoi
 
-    qoi = QOI_OBJECTS[qoi](**params)
+    qoi = get_qoi(qoi)(**params)
     return qoi

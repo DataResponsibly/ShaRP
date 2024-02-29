@@ -34,6 +34,13 @@ This is the full API documentation of the `sharp` package.
     qoi.RankScoreQoI
     qoi.TopKQoI
 
+.. autosummary::
+    :toctree: _generated/
+    :template: function.rst
+
+    qoi.get_qoi
+    qoi.get_qoi_names
+
 
 :mod:`sharp.visualization`
 --------------------------
