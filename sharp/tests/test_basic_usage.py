@@ -3,7 +3,7 @@ from itertools import product
 import numpy as np
 from sklearn.utils import check_random_state
 from sharp import ShaRP
-from sharp.qoi import QOI_OBJECTS
+from sharp.qoi import get_qoi
 from sharp._measures import MEASURES
 
 # Set up some envrionment variables
@@ -12,10 +12,10 @@ N_SAMPLES = 50
 rng = check_random_state(RNG_SEED)
 
 rank_qois_str = ["ranking", "ranking_score", "top_k"]
-rank_qois_obj = [QOI_OBJECTS[qoi] for qoi in rank_qois_str]
+rank_qois_obj = [get_qoi(qoi) for qoi in rank_qois_str]
 
 clf_qois_str = ["diff", "flip", "likelihood"]
-clf_qois_obj = [QOI_OBJECTS[qoi] for qoi in clf_qois_str]
+clf_qois_obj = [get_qoi(qoi) for qoi in clf_qois_str]
 
 measures = list(MEASURES.keys())
 

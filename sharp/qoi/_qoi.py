@@ -1,3 +1,4 @@
+import copy
 from .base import BaseQoI, BaseRankingQoI
 
 
@@ -138,7 +139,7 @@ class TopKQoI(BaseRankingQoI):
         return (self.estimate(rows1) - self.estimate(rows2)).mean()
 
 
-QOI_OBJECTS = {
+_QOI_OBJECTS = {
     "diff": DiffQoI,
     "flip": FlipQoI,
     "likelihood": LikelihoodQoI,
@@ -146,3 +147,65 @@ QOI_OBJECTS = {
     "ranking_score": RankingScoreQoI,
     "top_k": TopKQoI,
 }
+
+
+def get_qoi_names():
+    """Get the names of all available quantities of interest.
+
+    These names can be passed to :func:`~sharp.qoi.get_qoi` to
+    retrieve the QoI object.
+
+    Returns
+    -------
+    list of str
+        Names of all available quantities of interest.
+
+    Examples
+    --------
+    >>> from sharp.qoi import get_qoi_names
+    >>> all_qois = get_qoi_names()
+    >>> type(all_qois)
+    <class 'list'>
+    >>> all_qois[:3]
+    ['diff', 'flip', 'likelihood']
+    >>> "ranking" in all_qois
+    True
+    """
+    return sorted(_QOI_OBJECTS.keys())
+
+
+def get_qoi(qoi):
+    """Get a quantity of interest from string.
+
+    :func:`~sharp.qoi.get_qoi_names` can be used to retrieve the names
+    of all available quantities of interest.
+
+    Parameters
+    ----------
+    qoi : str, callable or None
+        Quantity of interest as string. If callable it is returned as is.
+        If None, returns None.
+
+    Returns
+    -------
+    quantity : callable
+        The quantity of interest.
+
+    Notes
+    -----
+    When passed a string, this function always returns a copy of the scorer
+    object. Calling `get_qoi` twice for the same scorer results in two
+    separate QoI objects.
+    """
+    if isinstance(qoi, str):
+        try:
+            quantity = copy.deepcopy(_QOI_OBJECTS[qoi])
+        except KeyError:
+            raise ValueError(
+                "%r is not a valid scoring value. "
+                "Use sklearn.metrics.get_scorer_names() "
+                "to get valid options." % qoi
+            )
+    else:
+        quantity = qoi
+    return quantity
