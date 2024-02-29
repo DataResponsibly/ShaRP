@@ -1,5 +1,5 @@
+import copy
 from .base import BaseQoI, BaseRankQoI
-
 
 
 class DiffQoI(BaseQoI):

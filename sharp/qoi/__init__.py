@@ -10,7 +10,7 @@ from ._qoi import (
     RankScoreQoI,
     TopKQoI,
     get_qoi,
-    get_qoi_names
+    get_qoi_names,
 )
 
 __all__ = [
