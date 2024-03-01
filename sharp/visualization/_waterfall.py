@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import numpy as np
+from sklearn.utils.validation import check_array
 from sharp.utils._utils import _optional_import
 
 
@@ -30,7 +31,11 @@ def _waterfall(shap_values, max_display=10, show=False):  # noqa
         plt.ioff()
 
     base_values = float(shap_values["base_values"])
-    features = shap_values["values"]
+    features = (
+        np.array(shap_values["features"])
+        if shap_values["features"] is not None
+        else np.array(shap_values["values"])
+    )
     feature_names = shap_values["feature_names"]
     # lower_bounds = shap_values["lower_bounds"]
     # upper_bounds = shap_values["upper_bounds"]
@@ -38,7 +43,7 @@ def _waterfall(shap_values, max_display=10, show=False):  # noqa
 
     # init variables we use for tracking the plot locations
     num_features = min(max_display, len(values))
-    row_height = 0.5
+    # row_height = 0.5
     rng = range(num_features - 1, -1, -1)
     order = np.argsort(-np.abs(values))
     pos_lefts = []
@@ -55,7 +60,7 @@ def _waterfall(shap_values, max_display=10, show=False):  # noqa
     yticklabels = ["" for _ in range(num_features + 1)]
 
     # size the plot based on how many features we are plotting
-    plt.gcf().set_size_inches(8, num_features * row_height + 1.5)
+    # plt.gcf().set_size_inches(8, num_features * row_height + 1.5)
 
     # see how many individual (vs. grouped at the end) features we are plotting
     if num_features == len(values):
@@ -66,7 +71,7 @@ def _waterfall(shap_values, max_display=10, show=False):  # noqa
     # compute the locations of the individual features and plot the dashed connecting
     # lines
     for i in range(num_individual):
-        sval = values[order[i]]
+        sval = values.iloc[order.iloc[i]]
         loc -= sval
         if sval >= 0:
             pos_inds.append(rng[i])
@@ -92,17 +97,19 @@ def _waterfall(shap_values, max_display=10, show=False):  # noqa
                 zorder=-1,
             )
         if features is None:
-            yticklabels[rng[i]] = feature_names[order[i]]
+            yticklabels[rng[i]] = feature_names[order.iloc[i]]
         else:
-            if np.issubdtype(type(features[order[i]]), np.number):
+            if np.issubdtype(type(features[order.iloc[i]]), np.number):
                 yticklabels[rng[i]] = (
-                    format_value(float(features[order[i]]), "%0.03f")
+                    format_value(float(features[order.iloc[i]]), "%0.03f")
                     + " = "
-                    + feature_names[order[i]]
+                    + feature_names[order.iloc[i]]
                 )
             else:
                 yticklabels[rng[i]] = (
-                    str(features[order[i]]) + " = " + str(feature_names[order[i]])
+                    str(features[order.iloc[i]])
+                    + " = "
+                    + str(feature_names[order.iloc[i]])
                 )
 
     # add a last grouped feature to represent the impact of all the features we didn't

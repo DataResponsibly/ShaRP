@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.utils import check_random_state
 from sharp import ShaRP
+from sharp.utils import scores_to_ordering
 
 # Set up some envrionment variables
 RNG_SEED = 42
@@ -31,6 +32,7 @@ X = np.concatenate(
     [rng.normal(size=(N_SAMPLES, 1)), rng.binomial(1, 0.5, size=(N_SAMPLES, 1))], axis=1
 )
 y = score_function(X)
+rank = scores_to_ordering(y)
 
 
 ######################################################################################
@@ -65,17 +67,29 @@ print("Pairwise comparison (one vs group):", xai.pairwise(X[2], X[5:10]))
 ######################################################################################
 # We can also turn these into visualizations:
 
+plt.style.use('seaborn-v0_8-whitegrid')
+
 # Visualization of feature contributions
 print("Sample 2 feature values:", X[2])
 print("Sample 3 feature values:", X[3])
-fig, axes = plt.subplots(1, 2)
+fig, axes = plt.subplots(1, 2, figsize=(13.5, 4.5), layout="constrained")
 
 # Bar plot comparing two points
-xai.plot.bar(pair_scores, ax=axes[0])
-axes[0].set_title("Pairwise comparison (Sample 2 vs 3)")
+xai.plot.bar(pair_scores, ax=axes[0], color="#ff0051")
+axes[0].set_title(
+    f"Pairwise comparison - Sample 2 (rank {rank[2]}) vs 3 (rank {rank[3]})",
+    fontsize=12,
+    y=-0.2
+)
+axes[0].set_xlabel("")
+axes[0].set_ylabel("Contribution to rank", fontsize=12)
+axes[0].tick_params(axis='both', which='major', labelsize=12)
 
 # Waterfall explaining rank for sample 2
-axes[1] = xai.plot.waterfall(individual_scores)
-axes[1].suptitle("Rank explanation for Sample 9")
+axes[1] = xai.plot.waterfall(
+    individual_scores, feature_values=X[9], mean_target_value=rank.mean()
+)
+ax = axes[1].gca()
+ax.set_title("Rank explanation for Sample 9", fontsize=12, y=-0.2)
 
 plt.show()
