@@ -12,7 +12,7 @@ def check_feature_names(X):
     feature_names = _get_feature_names(X)
 
     if feature_names is None:
-        feature_names = np.indices([X.shape[1]]).squeeze()
+        feature_names = np.array([f"Feature {i}" for i in range(X.shape[1])])
 
     return feature_names
 
