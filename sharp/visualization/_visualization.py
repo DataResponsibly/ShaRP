@@ -27,7 +27,7 @@ class ShaRPViz:  # TODO
 
         return ax
 
-    def waterfall(self, scores, mean_shapley_value=0):
+    def waterfall(self, contributions, feature_values=None, mean_target_value=0):
         """
         TODO: refactor waterfall plot code.
         """
@@ -37,10 +37,10 @@ class ShaRPViz:  # TODO
         rank_dict = {
             "upper_bounds": None,
             "lower_bounds": None,
-            "features": None,  # pd.Series(feature_names),
+            "features": feature_values,  # pd.Series(feature_names),
             "data": None,  # pd.Series(ind_values, index=feature_names),
-            "base_values": mean_shapley_value,
+            "base_values": mean_target_value,
             "feature_names": feature_names,
-            "values": pd.Series(scores, index=feature_names),
+            "values": pd.Series(contributions, index=feature_names),
         }
         return _waterfall(rank_dict, max_display=10)
