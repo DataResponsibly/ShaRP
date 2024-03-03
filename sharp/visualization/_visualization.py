@@ -7,6 +7,7 @@ NOTE: Matplotlib only. Must be an optional import.
 import pandas as pd
 from sharp.utils._utils import _optional_import
 from ._waterfall import _waterfall
+from ._aggregate import strata_boxplots
 
 
 class ShaRPViz:  # TODO
@@ -44,3 +45,29 @@ class ShaRPViz:  # TODO
             "values": pd.Series(scores, index=feature_names),
         }
         return _waterfall(rank_dict, max_display=10)
+
+    def strata_boxplot(
+        self,
+        X,
+        y,
+        contributions,
+        feature_names=None,
+        n_strata=5,
+        gap_size=1,
+        cmap=None,
+        ax=None,
+        **kwargs
+    ):
+        if feature_names is None:
+            feature_names = self.sharp.feature_names_.astype(str).tolist()
+        return strata_boxplots(
+            X=X,
+            y=y,
+            contributions=contributions,
+            feature_names=feature_names,
+            n_strata=n_strata,
+            gap_size=gap_size,
+            cmap=cmap,
+            ax=ax,
+            **kwargs
+        )
