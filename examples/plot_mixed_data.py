@@ -83,6 +83,8 @@ unary_values
 ##############################################################
 # Finally, we can plot the mean contributions of each feature:
 
+plt.style.use("seaborn-v0_8-whitegrid")
+
 fig, ax = plt.subplots()
 xai.plot.bar(unary_values.mean(), ax=ax)
 ax.set_ylim(bottom=0)
