@@ -117,16 +117,11 @@ def _shapley(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **
     # Set up variable to track the total score for the specific attribute
     total_score = 0
 
-    # Obtain all coalitions
-    coalitions = []
-    for set_size in range(0, len(rest_cols_idx) + 1):
-        for set_cols_idx in combinations(rest_cols_idx, set_size):
-            coalitions.append(set_cols_idx)
-
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
-        coalitions[set_cols_idx]
-        for set_cols_idx in rng.choice(np.arange(len(coalitions)), size=coalition_size, replace=replace)
+        set_cols_idx
+        for set_size in range(0, coalition_size + 1)
+        for set_cols_idx in combinations(rest_cols_idx, set_size)
     ]
 
     for set_cols_idx in iterable:
@@ -175,16 +170,11 @@ def _banzhaff(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, *
     # Set up variable to track the total score for the specific attribute
     total_score = 0
 
-    # Obtain all coalitions
-    coalitions = []
-    for set_size in range(0, len(rest_cols_idx) + 1):
-        for set_cols_idx in combinations(rest_cols_idx, set_size):
-            coalitions.append(set_cols_idx)
-
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
-        coalitions[set_cols_idx]
-        for set_cols_idx in rng.choice(np.arange(len(coalitions)), size=coalition_size, replace=replace)
+        set_cols_idx
+        for set_size in range(0, coalition_size + 1)
+        for set_cols_idx in combinations(rest_cols_idx, set_size)
     ]
 
     for set_cols_idx in iterable:
