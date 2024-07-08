@@ -57,6 +57,7 @@ class ShaRP(BaseEstimator):
         target_function=None,
         measure="shapley",
         sample_size=None,
+        coalition_size=None,
         replace=False,
         random_state=None,
         n_jobs=1,
@@ -67,6 +68,7 @@ class ShaRP(BaseEstimator):
         self.target_function = target_function
         self.measure = measure
         self.sample_size = sample_size
+        self.coalition_size = coalition_size
         self.replace = replace
         self.random_state = random_state
         self.n_jobs = n_jobs
@@ -107,6 +109,13 @@ class ShaRP(BaseEstimator):
         else:
             set_cols_idx = None
 
+        if "coalition_size" in kwargs.keys():
+            coalition_size = kwargs["coalition_size"]
+        elif self.coalition_size is not None:
+            coalition_size = self.coalition_size
+        else:
+            coalition_size = 2 ** (X_.shape[1] - 1) # TODO is this -1 or - len(set_cols_idx)?
+
         if isinstance(sample, int):
             sample = X_[sample]
 
@@ -126,6 +135,7 @@ class ShaRP(BaseEstimator):
                 X=X_,
                 qoi=self.qoi_,
                 sample_size=sample_size,
+                coalition_size=coalition_size,
                 replace=self.replace,
                 rng=self._rng,
             ),
@@ -151,6 +161,13 @@ class ShaRP(BaseEstimator):
         else:
             set_cols_idx = None
 
+        if "coalition_size" in kwargs.keys():
+            coalition_size = kwargs["coalition_size"]
+        elif self.coalition_size is not None:
+            coalition_size = self.coalition_size
+        else:
+            coalition_size = 2 ** (X_.shape[1] - 1)
+
         if "sample_size" in kwargs.keys():
             sample_size = kwargs["sample_size"]
         elif self.sample_size is not None:
@@ -168,6 +185,7 @@ class ShaRP(BaseEstimator):
                 X=X_,
                 qoi=self.qoi_,
                 sample_size=sample_size,
+                coalition_size=coalition_size,
                 replace=self.replace,
                 rng=self._rng,
             )
@@ -220,4 +238,11 @@ class ShaRP(BaseEstimator):
         else:
             sample_size = sample2.shape[0]
 
-        return self.individual(sample1, X=sample2, sample_size=sample_size, **kwargs)
+        if "coalition_size" in kwargs.keys():
+            coalition_size = kwargs["coalition_size"]
+        elif self.coalition_size is not None:
+            coalition_size = self.coalition_size
+        else:
+            coalition_size = 2 ** (sample1.shape[1] - 1)
+
+        return self.individual(sample1, X=sample2, sample_size=sample_size, coalition_size=coalition_size, **kwargs)

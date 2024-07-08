@@ -86,7 +86,7 @@ def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, replace, rng, **k
     return qoi.calculate(X_modded1, X_modded2)
 
 
-def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
+def _shapley(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -117,12 +117,18 @@ def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     # Set up variable to track the total score for the specific attribute
     total_score = 0
 
+    # Obtain all coalitions
+    coalitions = []
+    for set_size in range(0, len(rest_cols_idx) + 1):
+        for set_cols_idx in combinations(rest_cols_idx, set_size):
+            coalitions.append(set_cols_idx)
+
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
-        set_cols_idx
-        for set_size in range(0, len(rest_cols_idx) + 1)
-        for set_cols_idx in combinations(rest_cols_idx, set_size)
+        coalitions[set_cols_idx]
+        for set_cols_idx in rng.choice(np.arange(len(coalitions)), size=coalition_size, replace=replace)
     ]
+
     for set_cols_idx in iterable:
         score = _marginal(
             row=row,
@@ -139,7 +145,7 @@ def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     return total_score
 
 
-def _banzhaff(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
+def _banzhaff(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -169,12 +175,18 @@ def _banzhaff(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     # Set up variable to track the total score for the specific attribute
     total_score = 0
 
+    # Obtain all coalitions
+    coalitions = []
+    for set_size in range(0, len(rest_cols_idx) + 1):
+        for set_cols_idx in combinations(rest_cols_idx, set_size):
+            coalitions.append(set_cols_idx)
+
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
-        set_cols_idx
-        for set_size in range(1, len(rest_cols_idx) + 1)
-        for set_cols_idx in combinations(rest_cols_idx, set_size)
+        coalitions[set_cols_idx]
+        for set_cols_idx in rng.choice(np.arange(len(coalitions)), size=coalition_size, replace=replace)
     ]
+
     for set_cols_idx in iterable:
         score = _marginal(
             row=row,
