@@ -86,7 +86,7 @@ def _marginal(row, col_idx, set_cols_idx, X, qoi, sample_size, replace, rng, **k
     return qoi.calculate(X_modded1, X_modded2)
 
 
-def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
+def _shapley(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -120,9 +120,10 @@ def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
         set_cols_idx
-        for set_size in range(0, len(rest_cols_idx) + 1)
+        for set_size in range(0, coalition_size + 1)
         for set_cols_idx in combinations(rest_cols_idx, set_size)
     ]
+
     for set_cols_idx in iterable:
         score = _marginal(
             row=row,
@@ -139,7 +140,7 @@ def _shapley(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     return total_score
 
 
-def _banzhaff(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
+def _banzhaff(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs):
     """
     Calculates the Shapley for a single attribute of a single row.
 
@@ -172,9 +173,10 @@ def _banzhaff(row, col_idx, X, qoi, sample_size, replace, rng, **kwargs):
     # Calculate the marginal score of every combination for ``col_idx`` vs rest
     iterable = [
         set_cols_idx
-        for set_size in range(1, len(rest_cols_idx) + 1)
+        for set_size in range(0, coalition_size + 1)
         for set_cols_idx in combinations(rest_cols_idx, set_size)
     ]
+
     for set_cols_idx in iterable:
         score = _marginal(
             row=row,
