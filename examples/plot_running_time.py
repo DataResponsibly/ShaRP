@@ -45,14 +45,14 @@ rank = scores_to_ordering(y)
 ######################################################################################
 # Run ShaRP for all features using different sample and coalition sizes
 
-x_explain = X[rng.choice(np.arange(X.shape[0]), size=1000)]
+x_explain = X[rng.choice(np.arange(X.shape[0]), size=100)]
 
 # Calculate actual exact contributions
 xai = ShaRP(
         qoi="rank",
         target_function=score_function,
         measure="shapley",
-        sample_size=150,
+        sample_size=50,
         coalition_size=None,
         replace=False,
         random_state=RNG_SEED,
@@ -80,7 +80,7 @@ for coal_size in sizes:
         qoi="rank",
         target_function=score_function,
         measure="shapley",
-        sample_size=150,
+        sample_size=50,
         coalition_size=coal_size,
         replace=False,
         random_state=RNG_SEED,
