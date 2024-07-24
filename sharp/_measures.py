@@ -140,7 +140,9 @@ def _shapley(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **
     return total_score
 
 
-def _banzhaff(row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs):
+def _banzhaff(
+    row, col_idx, X, qoi, sample_size, coalition_size, replace, rng, **kwargs
+):
     """
     Calculates the Shapley for a single attribute of a single row.
 

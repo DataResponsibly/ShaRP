@@ -80,6 +80,9 @@ class ShaRP(BaseEstimator):
     def fit(self, X, y=None):
         X_, y_ = check_inputs(X, y)
 
+        self._X = X_
+        self._y = y_
+
         self._rng = check_random_state(self.random_state)
 
         if isinstance(self.qoi, str):
@@ -197,10 +200,13 @@ class ShaRP(BaseEstimator):
         """
         set_cols_idx should be passed in kwargs if measure is marginal
         """
+        X_ref = self._X if self._X is not None else check_inputs(X)[0]
         X_, y_ = check_inputs(X, y)
 
         influences = parallel_loop(
-            lambda sample_idx: self.individual(sample_idx, X_, verbose=False, **kwargs),
+            lambda sample_idx: self.individual(
+                X_[sample_idx], X_ref, verbose=False, **kwargs
+            ),
             range(X_.shape[0]),
             n_jobs=self.n_jobs,
             progress_bar=self.verbose,
@@ -239,11 +245,17 @@ class ShaRP(BaseEstimator):
             sample_size = sample2.shape[0]
 
         if "coalition_size" in kwargs.keys():
-            #TODO: if colaition_size is out of range, set it
+            # TODO: if colaition_size is out of range, set it
             coalition_size = kwargs["coalition_size"]
         elif self.coalition_size is not None:
             coalition_size = self.coalition_size
         else:
             coalition_size = sample1.shape[1] - 1
 
-        return self.individual(sample1, X=sample2, sample_size=sample_size, coalition_size=coalition_size, **kwargs)
+        return self.individual(
+            sample1,
+            X=sample2,
+            sample_size=sample_size,
+            coalition_size=coalition_size,
+            **kwargs
+        )
