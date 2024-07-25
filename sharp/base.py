@@ -250,7 +250,7 @@ class ShaRP(BaseEstimator):
         elif self.coalition_size is not None:
             coalition_size = self.coalition_size
         else:
-            coalition_size = sample1.shape[1] - 1
+            coalition_size = len(sample1) - 1
 
         return self.individual(
             sample1,
