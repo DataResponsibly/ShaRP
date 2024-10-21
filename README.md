@@ -2,8 +2,6 @@
     <h1 align="center">ShaRP</h1>
 </div>
 
-______________________________________________________________________
-
 <p align="center">
 <a href="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml"><img alt="Github Actions" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml/badge.svg"></a>
 <a href="https://codecov.io/gh/joaopfonseca/ml-research"><img alt="Codecov" src="https://codecov.io/gh/joaopfonseca/ml-research/branch/master/graph/badge.svg?token=J2EBA4YTMN"></a>
@@ -32,11 +30,7 @@ Some functions require Matplotlib (>= 2.2.3) for plotting.
 
 The easiest way to install ``sharp`` is using ``pip`` :
 
-    pip install -U xai-sharp
-
-Or ``conda`` :
-
-    conda install -c conda-forge xai-sharp
+    pip install -U git+https://github.com/DataResponsibly/ShaRP
 
 The documentation includes more detailed [installation
 instructions](https://sharp.readthedocs.io/en/latest/getting-started.html).
