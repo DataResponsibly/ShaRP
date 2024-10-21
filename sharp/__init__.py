@@ -9,8 +9,9 @@ outcome, based on Shapley values.
 Subpackages
 -----------
 qoi
-utils
 visualization
+utils
+metrics
 """
 
 import sys
@@ -31,6 +32,7 @@ if __SHARP_SETUP__:
 else:
     from . import qoi
     from . import visualization
+    from . import metrics
     from . import utils
     from .base import ShaRP
     from ._version import __version__
@@ -39,6 +41,7 @@ else:
     __all__ = [
         "qoi",
         "visualization",
+        "metrics",
         "utils",
         # Non-modules:
         "ShaRP",
