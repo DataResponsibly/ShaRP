@@ -17,5 +17,4 @@ exclude_lines =
 ignore_errors = True
 omit =
     */tests/*
-    */datasets/*
 show_missing = True
