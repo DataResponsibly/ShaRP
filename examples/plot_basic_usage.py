@@ -4,7 +4,7 @@ Basic usage
 
 This example shows a simple application of ShaRP over a toy dataset.
 
-We will start by setting up the imports, envrironment variables and a basic score
+We will start by setting up the imports, environment variables and a basic score
 function that will be used to determine rankings.
 """
 
