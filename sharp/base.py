@@ -258,3 +258,24 @@ class ShaRP(BaseEstimator):
             coalition_size=coalition_size,
             **kwargs
         )
+
+    def pairwise_all(self, pairs, **kwargs):
+        """
+        set_cols_idx should be passed in kwargs if measure is marginal
+        pairs is a list of tuples of indexes
+        """
+        # X_ref = self._X if self._X is not None else check_inputs(X)[0]
+
+        if "sample_size" in kwargs.keys():
+            sample_size = 1
+
+        influences = parallel_loop(
+            lambda idx: self.individual(
+                pairs[idx][0].reshape(1, -1), X=pairs[idx][1].reshape(1, -1), verbose=False, **kwargs
+            ),
+            range(len(pairs)),
+            n_jobs=self.n_jobs,
+            progress_bar=self.verbose,
+        )
+
+        return np.array(influences)

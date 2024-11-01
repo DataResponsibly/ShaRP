@@ -63,6 +63,9 @@ print("Pairwise comparison (one vs one):", pair_scores)
 
 print("Pairwise comparison (one vs group):", xai.pairwise(X[2], X[5:10]))
 
+pairlist=[(X[2], X[3]), (X[2], X[4]), (X[2], X[2]), (X[4], X[2])]
+print("Pairwise comparison (group of pairs):", xai.pairwise_all(pairlist))
+
 
 ######################################################################################
 # We can also turn these into visualizations:
