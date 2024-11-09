@@ -1,8 +1,9 @@
 """
+Comparison of feature contributions for privileged and protected groups
+=======================================================================
 
-==========================================================
-
-
+This example demonstrates how feature contributions differ for privileged 
+and protected groups after training ``ShaRP`` model on the whole data.
 """
 
 import numpy as np
@@ -13,6 +14,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sharp import ShaRP
 from sharp.utils import check_inputs
 
+plt.style.use("bmh")
 
 #############################################################################################
 # Let's start with data preparation
@@ -60,11 +62,17 @@ xai.fit(X)
 
 
 #############################################################################################
-# Let's take a look at some contributions for both QOIs
+# Let's take a look at contributions for both QOIs
 
-contributions = xai.all(X)[:10]
+contributions = xai.all(X)
 
-# Now let's create boxplots and compare feature contributions to different groups
+# Now let's create boxplots and compare feature contributions for privileged and 
+# protected groups
+print("Feature contributions for all data:")
 xai.plot.strata_boxplot(X, scores, contributions)
+
+print("Feature contributions for privileged group:")
 xai.plot.strata_boxplot(X.loc[privil_group_indexes], scores[privil_group_indexes], contributions[privil_group_indexes])
+
+print("Feature contributions for protected group:")
 xai.plot.strata_boxplot(X.loc[protec_group_indexes], scores[protec_group_indexes], contributions[protec_group_indexes])
