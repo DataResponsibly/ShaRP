@@ -24,7 +24,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_gallery.gen_gallery",
     "sphinx_markdown_tables",
-    "sphinxawesome_theme.highlighting",
+    # "sphinxawesome_theme.highlighting",
     "recommonmark",
     "numpydoc",
 ]
