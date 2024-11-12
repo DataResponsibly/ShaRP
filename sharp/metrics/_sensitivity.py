@@ -220,7 +220,6 @@ def explanation_sensitivity(
 def explanation_sensitivity_all_neighbors(
     original_data, contributions, rankings, measure="kendall", threshold=0.1, **kwargs
 ):
-    result = lambda row_idx: row_wise_explanation_sensitivity_all_neighbors(
+    return lambda row_idx: row_wise_explanation_sensitivity_all_neighbors(
         original_data, contributions, row_idx, rankings, threshold, measure, **kwargs
     )
-    return result
