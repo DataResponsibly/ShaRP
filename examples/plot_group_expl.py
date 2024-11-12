@@ -24,7 +24,10 @@ X, y = fetch_openml(
 )
 
 # Get the indices of samples that belong to each group
-privil_group_indexes, protec_group_indexes = X[X["SEX"] == 1].index, X[X["SEX"] == 2].index
+privil_group_indexes, protec_group_indexes = (
+    X[X["SEX"] == 1].index,
+    X[X["SEX"] == 2].index,
+)
 
 # Reduce the number of features in the dataset
 numerical_cols = ["AGEP", "WKHP"]
@@ -34,10 +37,12 @@ X = X.filter(items=numerical_cols + ordinal_cols)
 
 X.head()
 
+
 # Here we will define the scoring function
 def score_function(X):
     X, _ = check_inputs(X)
     return 0.2 * X[:, 0] + 0.3 * X[:, 1] + 0.5 * X[:, 2]
+
 
 # Standardize X and calculate scores
 scaler = MinMaxScaler()
@@ -66,13 +71,21 @@ xai.fit(X)
 
 contributions = xai.all(X)
 
-# Now let's create boxplots and compare feature contributions for privileged and 
+# Now let's create boxplots and compare feature contributions for privileged and
 # protected groups
 print("Feature contributions for all data:")
 xai.plot.strata_boxplot(X, scores, contributions)
 
 print("Feature contributions for privileged group:")
-xai.plot.strata_boxplot(X.loc[privil_group_indexes], scores[privil_group_indexes], contributions[privil_group_indexes])
+xai.plot.strata_boxplot(
+    X.loc[privil_group_indexes],
+    scores[privil_group_indexes],
+    contributions[privil_group_indexes],
+)
 
 print("Feature contributions for protected group:")
-xai.plot.strata_boxplot(X.loc[protec_group_indexes], scores[protec_group_indexes], contributions[protec_group_indexes])
+xai.plot.strata_boxplot(
+    X.loc[protec_group_indexes],
+    scores[protec_group_indexes],
+    contributions[protec_group_indexes],
+)
