@@ -50,7 +50,9 @@ def strata_boxplots(
 
     df["target_binned"] = df["target_binned"].str.replace("<", "$<$")
 
-    colors = [plt.get_cmap(cmap)(i / len(feature_names)) for i in range(len(feature_names))]
+    colors = [
+        plt.get_cmap(cmap)(i / len(feature_names)) for i in range(len(feature_names))
+    ]
     bin_names = df["target_binned"].unique()
     pos_increment = 1 / (len(feature_names) + gap_size)
     boxes = []

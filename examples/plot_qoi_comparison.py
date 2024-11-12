@@ -29,8 +29,8 @@ rng = check_random_state(RNG_SEED)
 
 
 #############################################################################################
-# We will use CS Rankings dataset, which contains data for 189 Computer Science departments 
-# in the US, e.g., publication count of the faculty across 4 research areas: AI, Systems, 
+# We will use CS Rankings dataset, which contains data for 189 Computer Science departments
+# in the US, e.g., publication count of the faculty across 4 research areas: AI, Systems,
 # Theory, and Inter- disciplinary.
 
 CS_RANKS_URL = "https://zenodo.org/records/11234896/files/csrankings_raw.csv"
@@ -43,6 +43,7 @@ csrank_data = (
     .set_index("Institution")
 )
 
+
 # Let's also preprocess this data
 def preprocess_csrank_data(df):
     X = df.drop(columns=["Rank", "Score"])
@@ -52,8 +53,10 @@ def preprocess_csrank_data(df):
     scores = df.Score
     return X, ranks, scores
 
+
 X, _, _ = preprocess_csrank_data(csrank_data)
 X.head()
+
 
 # Here we will define the scoring function
 def csrank_score(X):
@@ -68,6 +71,7 @@ def csrank_score(X):
     return np.clip(
         (np.array(X) * multiplier) ** weights + 1, a_min=1, a_max=np.inf
     ).prod(axis=1) ** (1 / weights.sum())
+
 
 score = csrank_score(X)
 rank = scores_to_ordering(score)
@@ -108,7 +112,7 @@ contributions_rank[:5]
 contributions_score = xai_score.all(X)
 contributions_score[:5]
 
-# Now let's plot the waterfall plots for different universities and check 
+# Now let's plot the waterfall plots for different universities and check
 # if the results for `score` and `rank` differ
 
 # Plot for Stanford University, ranked #6 in QS World University Rankings 2025
@@ -118,7 +122,7 @@ plt.subplot(1, 2, 1)
 xai_rank.plot.waterfall(
     contributions=contributions_rank[5],
     feature_values=X.iloc[5].to_numpy(),
-    mean_target_value=rank.mean()
+    mean_target_value=rank.mean(),
 )
 plt.title("Stanford University - Waterfall Plot for Rank")
 
@@ -126,7 +130,7 @@ plt.subplot(1, 2, 2)
 xai_score.plot.waterfall(
     contributions=contributions_score[5],
     feature_values=X.iloc[5].to_numpy(),
-    mean_target_value=score.mean()
+    mean_target_value=score.mean(),
 )
 plt.title("Stanford University - Waterfall Plot for Score")
 
@@ -141,7 +145,7 @@ plt.subplot(1, 2, 1)
 xai_rank.plot.waterfall(
     contributions=contributions_rank[15],
     feature_values=X.iloc[15].to_numpy(),
-    mean_target_value=rank.mean()
+    mean_target_value=rank.mean(),
 )
 plt.title("University of Texas at Austin - Waterfall Plot for Rank")
 
@@ -149,7 +153,7 @@ plt.subplot(1, 2, 2)
 xai_score.plot.waterfall(
     contributions=contributions_score[15],
     feature_values=X.iloc[15].to_numpy(),
-    mean_target_value=score.mean()
+    mean_target_value=score.mean(),
 )
 plt.title("University of Texas at Austin - Waterfall Plot for Score")
 
@@ -164,7 +168,7 @@ plt.subplot(1, 2, 1)
 xai_rank.plot.waterfall(
     contributions=contributions_rank[53],
     feature_values=X.iloc[53].to_numpy(),
-    mean_target_value=rank.mean()
+    mean_target_value=rank.mean(),
 )
 plt.title("Indiana University - Waterfall Plot for Rank")
 
@@ -172,7 +176,7 @@ plt.subplot(1, 2, 2)
 xai_score.plot.waterfall(
     contributions=contributions_score[53],
     feature_values=X.iloc[53].to_numpy(),
-    mean_target_value=score.mean()
+    mean_target_value=score.mean(),
 )
 plt.title("Indiana University - Waterfall Plot for Score")
 

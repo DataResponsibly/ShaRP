@@ -79,20 +79,38 @@ print("Aggregate feature contributions:", xai_banzhaf.all(X).mean(axis=0))
 # Compute feature contributions for a single observation using both approaches
 individual_scores_banzhaf = xai_banzhaf.individual(6, X)
 individual_scores_shapley = xai_shapley.individual(6, X)
-print("Banzhaf - Feature contributions for sample 6:", [float(value) for value in individual_scores_banzhaf])
-print("Shapley - Feature contributions for sample 6:", [float(value) for value in individual_scores_shapley])
+print(
+    "Banzhaf - Feature contributions for sample 6:",
+    [float(value) for value in individual_scores_banzhaf],
+)
+print(
+    "Shapley - Feature contributions for sample 6:",
+    [float(value) for value in individual_scores_shapley],
+)
 
 # Compute pairwise feature contributions using Banzhaf approach
 pair_scores_banzhaf = xai_banzhaf.pairwise(X[2], X[3])
 pair_scores_group_banzhaf = xai_banzhaf.pairwise(X[2], X[5:10])
-print("Banzhaf - Pairwise comparison (one vs one):", [float(value) for value in pair_scores_banzhaf])
-print("Banzhaf - Pairwise comparison (one vs group):", [float(value) for value in pair_scores_group_banzhaf])
+print(
+    "Banzhaf - Pairwise comparison (one vs one):",
+    [float(value) for value in pair_scores_banzhaf],
+)
+print(
+    "Banzhaf - Pairwise comparison (one vs group):",
+    [float(value) for value in pair_scores_group_banzhaf],
+)
 
 # Compute pairwise feature contributions using Shapley approach
 pair_scores_shapley = xai_shapley.pairwise(X[2], X[3])
 pair_scores_group_shapley = xai_shapley.pairwise(X[2], X[5:10])
-print("Shapley - Pairwise comparison (one vs one):", [float(value) for value in pair_scores_shapley])
-print("Shapley - Pairwise comparison (one vs group):", [float(value) for value in pair_scores_group_shapley])
+print(
+    "Shapley - Pairwise comparison (one vs one):",
+    [float(value) for value in pair_scores_shapley],
+)
+print(
+    "Shapley - Pairwise comparison (one vs group):",
+    [float(value) for value in pair_scores_group_shapley],
+)
 
 
 #############################################################################################
