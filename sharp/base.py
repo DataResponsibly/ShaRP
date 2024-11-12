@@ -259,23 +259,16 @@ class ShaRP(BaseEstimator):
             **kwargs
         )
 
-    def pairwise_all(self, pairs, **kwargs):
+    def pairwise_set(self, samples1, samples2, **kwargs):
         """
         set_cols_idx should be passed in kwargs if measure is marginal
         pairs is a list of tuples of indexes
         """
-        # X_ref = self._X if self._X is not None else check_inputs(X)[0]
-
-        if "sample_size" in kwargs.keys():
-            sample_size = 1
-
-        influences = parallel_loop(
-            lambda idx: self.individual(
-                pairs[idx][0].reshape(1, -1), X=pairs[idx][1].reshape(1, -1), verbose=False, **kwargs
-            ),
-            range(len(pairs)),
+        contributions = parallel_loop(
+            lambda samples: self.pairwise(*samples, verbose=False, **kwargs),
+            zip(samples1, samples2),
             n_jobs=self.n_jobs,
             progress_bar=self.verbose,
         )
 
-        return np.array(influences)
+        return np.array(contributions)
