@@ -2,11 +2,10 @@
 Comparison of feature contributions for privileged and protected groups
 =======================================================================
 
-This example demonstrates how feature contributions differ for privileged 
-and protected groups after training ``ShaRP`` model on the whole data.
+This example demonstrates how feature contributions differ for advantaged
+and disadvantaged groups after training ``ShaRP`` model on the whole data.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_openml
 from sklearn.preprocessing import MinMaxScaler
@@ -14,9 +13,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sharp import ShaRP
 from sharp.utils import check_inputs
 
-plt.style.use("bmh")
+plt.style.use("seaborn-v0_8-whitegrid")
 
-#############################################################################################
+#########################################################################################
 # Let's start with data preparation
 
 X, y = fetch_openml(
@@ -24,10 +23,8 @@ X, y = fetch_openml(
 )
 
 # Get the indices of samples that belong to each group
-privil_group_indexes, protec_group_indexes = (
-    X[X["SEX"] == 1].index,
-    X[X["SEX"] == 2].index,
-)
+adv_idx = X[X["SEX"] == 1].index
+dis_idx = X[X["SEX"] == 2].index
 
 # Reduce the number of features in the dataset
 numerical_cols = ["AGEP", "WKHP"]
@@ -50,7 +47,7 @@ X.iloc[:, :] = scaler.fit_transform(X)
 scores = score_function(X)
 
 
-#############################################################################################
+#########################################################################################
 # Next, we will configure ``ShaRP`` and fit it on the whole dataset:
 
 xai = ShaRP(
@@ -66,26 +63,30 @@ xai = ShaRP(
 xai.fit(X)
 
 
-#############################################################################################
+#########################################################################################
 # Let's take a look at contributions for both QOIs
 
 contributions = xai.all(X)
 
-# Now let's create boxplots and compare feature contributions for privileged and
+# Now let's create box plots and compare feature contributions for privileged and
 # protected groups
-print("Feature contributions for all data:")
-xai.plot.strata_boxplot(X, scores, contributions)
 
-print("Feature contributions for privileged group:")
-xai.plot.strata_boxplot(
-    X.loc[privil_group_indexes],
-    scores[privil_group_indexes],
-    contributions[privil_group_indexes],
-)
+fig, axes = plt.subplots(1, 3, sharey=True, figsize=(15, 5))
 
-print("Feature contributions for protected group:")
-xai.plot.strata_boxplot(
-    X.loc[protec_group_indexes],
-    scores[protec_group_indexes],
-    contributions[protec_group_indexes],
-)
+for ax, idx, title in zip(
+    axes.flatten(),
+    [X.index, adv_idx, dis_idx],
+    ["All", "Advantaged group", "Disadvantaged group"],
+):
+    xai.plot.box(X=X.loc[idx], y=scores[idx], contributions=contributions[idx], ax=ax)
+    ax.set_xlabel(title)
+
+plt.show()
+
+# We can also compare contributions across groups overall:
+
+X["Sex"] = -1
+X.loc[adv_idx, "Sex"] = "Male"
+X.loc[dis_idx, "Sex"] = "Female"
+xai.plot.box(X, scores, contributions, group="Sex")
+plt.show()
