@@ -10,7 +10,7 @@ from ._waterfall import _waterfall
 from ._aggregate import strata_boxplots
 
 
-class ShaRPViz:  # TODO
+class ShaRPViz:
     def __init__(self, sharp):
         self.sharp = sharp
 
@@ -54,7 +54,7 @@ class ShaRPViz:  # TODO
         feature_names=None,
         n_strata=5,
         gap_size=1,
-        cmap=None,
+        cmap="Pastel1",
         ax=None,
         **kwargs
     ):
