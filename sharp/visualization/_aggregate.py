@@ -8,19 +8,23 @@ from sharp.utils._utils import _optional_import
 from sharp.utils import check_feature_names, scores_to_ordering
 
 
-def strata_boxplots(
+def group_boxplot(
     X,
     y,
     contributions,
     feature_names=None,
-    n_strata=5,
+    group=5,
     gap_size=1,
     cmap="Pastel1",
     ax=None,
     show=False,
     **kwargs,
 ):
-
+    """
+    If `group` is a string, it will be interpreted as the variable name to group by.
+    If it is an integer, it will be interpreted as the number bins to create in the
+    target, which will be used to form strata.
+    """
     plt = _optional_import("matplotlib.pyplot")
 
     if feature_names is None:
@@ -30,34 +34,36 @@ def strata_boxplots(
         fig, ax = plt.subplots()
 
     df = pd.DataFrame(contributions, columns=feature_names)
-
-    perc_step = 100 / n_strata
-    stratum_size = X.shape[0] / n_strata
-
     df["target"] = scores_to_ordering(y, -1)
-    df["target_binned"] = [
-        (
-            f"0-\n{int(perc_step)}%"
-            if np.floor((rank - 1) / stratum_size) == 0
-            else str(int(np.floor((rank - 1) / stratum_size) * perc_step))
-            + "-\n"
-            + str(int((np.floor((rank - 1) / stratum_size) + 1) * perc_step))
-            + "%"
-        )
-        for rank in df["target"]
-    ]
-    df.sort_values(by=["target_binned"], inplace=True)
-    df.drop(columns=["target"], inplace=True)
 
-    df["target_binned"] = df["target_binned"].str.replace("<", "$<$")
+    if isinstance(group, int):
+        perc_step = 100 / group
+        stratum_size = X.shape[0] / group
+
+        df["target"] = [
+            (
+                f"0-\n{int(perc_step)}%"
+                if np.floor((rank - 1) / stratum_size) == 0
+                else str(int(np.floor((rank - 1) / stratum_size) * perc_step))
+                + "-\n"
+                + str(int((np.floor((rank - 1) / stratum_size) + 1) * perc_step))
+                + "%"
+            )
+            for rank in df["target"]
+        ]
+        df["target"] = df["target"].str.replace("<", "$<$")
+    elif isinstance(group, str):
+        df["target"] = X[group]
+
+    df.sort_values(by=["target"], inplace=True)
 
     colors = [plt.get_cmap(cmap)(i) for i in range(len(feature_names))]
-    bin_names = df["target_binned"].unique()
+    bin_names = df["target"].unique()
     pos_increment = 1 / (len(feature_names) + gap_size)
     boxes = []
     for i, bin_name in enumerate(bin_names):
         box = ax.boxplot(
-            df[df["target_binned"] == bin_name][feature_names],
+            df[df["target"] == bin_name][feature_names],
             widths=pos_increment,
             positions=[i + pos_increment * n for n in range(len(feature_names))],
             patch_artist=True,
