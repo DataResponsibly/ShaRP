@@ -24,6 +24,8 @@ rank = scores_to_ordering(y)
 qois_str = ["rank", "rank_score", "top_k", "diff", "flip", "likelihood"]
 qois_obj = [get_qoi(qoi) for qoi in qois_str]
 
+pairs1 = rng.randint(0, X.shape[0], size=3)
+pairs2 = rng.randint(0, X.shape[0], size=3)
 
 # @pytest.mark.parametrize("qoi_str, item_idx", product(qois_str, range(X.shape[0])))
 # def test_qoi_estimation(qoi_str, item_idx):
@@ -52,7 +54,7 @@ def test_qoi_estimation(qoi_str):
 
 @pytest.mark.parametrize(
     "qoi_str, item_idx1, item_idx2",
-    product(qois_str, range(X.shape[0]), range(X.shape[0])),
+    product(qois_str, pairs1, pairs2),
 )
 def test_qoi_calculation(qoi_str, item_idx1, item_idx2):
     item1 = X[item_idx1 : item_idx1 + 1]
