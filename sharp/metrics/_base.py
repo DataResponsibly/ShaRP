@@ -181,7 +181,7 @@ def row_wise_kendall(results1, results2):
                 rank[mask] = rank[mask].max()
         ranks.append(rank)
 
-    row_sensitivity = kendall_similarity(*ranks)
+    row_sensitivity = kendall_similarity(a=ranks[0], b=ranks[1])
     return row_sensitivity
 
 
