@@ -1,9 +1,9 @@
 """
-Comparison of feature contributions for privileged and protected groups
-=======================================================================
+Comparison of feature contributions for advantaged and disadvantaged groups
+===========================================================================
 
-This example demonstrates how feature contributions differ for advantaged
-and disadvantaged groups after training ``ShaRP`` model on the whole data.
+This example demonstrates how feature contributions differ for advantaged and
+disadvantaged groups after training ``ShaRP`` model on the whole data.
 """
 
 import matplotlib.pyplot as plt
@@ -83,9 +83,10 @@ for ax, idx, title in zip(
 
 plt.show()
 
+#########################################################################################
 # We can also compare contributions across groups overall:
 
-X["Sex"] = -1
+X["Sex"] = ""
 X.loc[adv_idx, "Sex"] = "Male"
 X.loc[dis_idx, "Sex"] = "Female"
 xai.plot.box(X, scores, contributions, group="Sex")
