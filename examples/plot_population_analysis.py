@@ -130,5 +130,5 @@ plt.show()
 # %%
 # We can also get a sense on how feature importance varies across strata:
 
-xai.plot.strata_boxplot(X, y, contributions, n_strata=5, cmap="Pastel1")
+xai.plot.box(X, y, contributions, group=5, cmap="Pastel1")
 plt.show()
