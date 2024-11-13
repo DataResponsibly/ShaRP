@@ -17,6 +17,7 @@ def strata_boxplots(
     gap_size=1,
     cmap="Pastel1",
     ax=None,
+    show=False,
     **kwargs,
 ):
 
@@ -55,7 +56,7 @@ def strata_boxplots(
     pos_increment = 1 / (len(feature_names) + gap_size)
     boxes = []
     for i, bin_name in enumerate(bin_names):
-        box = plt.boxplot(
+        box = ax.boxplot(
             df[df["target_binned"] == bin_name][feature_names],
             widths=pos_increment,
             positions=[i + pos_increment * n for n in range(len(feature_names))],
@@ -72,12 +73,12 @@ def strata_boxplots(
             patch.set_facecolor(color)
             patches.append(patch)
 
-    plt.xticks(
+    ax.set_xticks(
         np.arange(0, len(bin_names)) + pos_increment * (len(feature_names) - 1) / 2,
         bin_names,
     )
 
-    plt.legend(
+    ax.legend(
         patches,
         feature_names,
         loc="lower center",
@@ -85,4 +86,7 @@ def strata_boxplots(
         ncol=len(feature_names),
     )
 
-    plt.show()
+    if show:
+        plt.show()
+    else:
+        return ax
