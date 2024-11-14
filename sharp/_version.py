@@ -20,4 +20,4 @@ algorithm (Shapley for Rankings and Preferences).
 # 'X.Y.dev0' is the canonical version of 'X.Y.dev'
 #
 
-__version__ = "0.1.a0"
+__version__ = "0.1.a1"
