@@ -32,9 +32,7 @@ MAINTAINER = "J. Fonseca"
 MAINTAINER_EMAIL = "jpfonseca@novaims.unl.pt"
 URL = "https://github.com/DataResponsibly/sharp"
 VERSION = __version__  # noqa
-SHORT_DESCRIPTION = (
-    "Implementation of the ShaRP framework."
-)
+SHORT_DESCRIPTION = "Implementation of the ShaRP framework."
 LICENSE = "MIT"
 CLASSIFIERS = [
     "Intended Audience :: Science/Research",
