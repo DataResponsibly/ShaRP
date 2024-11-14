@@ -7,6 +7,8 @@
 <a href="https://dataresponsibly.github.io/ShaRP/"><img alt="Documentation Status" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/deploy-docs.yml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 <a href="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"><img alt="Python Versions" src="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"></a>
+<a href="https://badge.fury.io/py/xai-sharp"><img alt="Pypi Version" src="https://badge.fury.io/py/xai-sharp.svg"></a>
+<a href="https://pepy.tech/project/xai-sharp"><img alt="Downloads" src="https://static.pepy.tech/personalized-badge/xai-sharp?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=downloads"></a>
 <a href="https://doi.org/10.48550/arXiv.2401.16744"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2401.16744.svg"></a>
 
 ``ShaRP`` is an open source library with the implementation of the ShaRP
