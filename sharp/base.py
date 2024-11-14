@@ -25,7 +25,7 @@ class ShaRP(BaseEstimator):
     ----------
     estimator : ML classifier
 
-    qoi : Quantity of interest
+    qoi : Quantity of interest, default: "rank"
 
     measure : measure used to estimate feature contributions (unary, set, banzhaf, etc.)
 
@@ -85,7 +85,13 @@ class ShaRP(BaseEstimator):
 
         self._rng = check_random_state(self.random_state)
 
-        if isinstance(self.qoi, str):
+        if self.qoi is None:
+            self.qoi_ = check_qoi(
+                "rank",
+                target_function=self.target_function,
+                X=X_,
+            )
+        elif isinstance(self.qoi, str):
             self.qoi_ = check_qoi(
                 self.qoi,
                 target_function=self.target_function,
