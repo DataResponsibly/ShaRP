@@ -22,7 +22,7 @@ def get_long_description() -> str:
     return (CURRENT_DIR / "README.md").read_text(encoding="utf8")
 
 
-import sharp._min_dependencies as min_deps
+import sharp._min_dependencies as min_deps  # noqa
 
 ver_file = os.path.join("sharp", "_version.py")
 with open(ver_file) as f:
@@ -30,10 +30,10 @@ with open(ver_file) as f:
 
 MAINTAINER = "J. Fonseca"
 MAINTAINER_EMAIL = "jpfonseca@novaims.unl.pt"
-URL = "https://github.com/joaopfonseca/sharp"
-VERSION = __version__
+URL = "https://github.com/DataResponsibly/sharp"
+VERSION = __version__  # noqa
 SHORT_DESCRIPTION = (
-    "Implementation of Machine Learning algorithms, experiments and utilities."
+    "Implementation of the ShaRP framework."
 )
 LICENSE = "MIT"
 CLASSIFIERS = [
@@ -58,7 +58,7 @@ EXTRAS_REQUIRE = {
 }
 
 setup(
-    name="sharp",
+    name="xai-sharp",
     maintainer=MAINTAINER,
     maintainer_email=MAINTAINER_EMAIL,
     url=URL,
