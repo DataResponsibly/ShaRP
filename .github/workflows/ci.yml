@@ -9,6 +9,9 @@ on:
   workflow_dispatch:
 
 
+permissions:
+  contents: write
+
 jobs:
   linting:
     name: Linting
@@ -61,16 +64,16 @@ jobs:
         run: |
           make test
 
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: DataResponsibly/sharp
+
       - name: Test Docs
         run: |
           cd doc
           make html
 
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v2
-        with:
-          # NOTE: Version is set as a workaround for a macos issue
-          version: v0.7.3
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          verbose: true
