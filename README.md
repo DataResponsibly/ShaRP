@@ -4,10 +4,10 @@
 
 <p align="center">
 <a href="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml"><img alt="Github Actions" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml/badge.svg"></a>
-<a href="https://codecov.io/gh/joaopfonseca/ml-research"><img alt="Codecov" src="https://codecov.io/gh/joaopfonseca/ml-research/branch/master/graph/badge.svg?token=J2EBA4YTMN"></a>
 <a href="https://dataresponsibly.github.io/ShaRP/"><img alt="Documentation Status" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/deploy-docs.yml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 <a href="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"><img alt="Python Versions" src="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"></a>
+<a href="https://doi.org/10.48550/arXiv.2401.16744"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2401.16744.svg"></a>
 
 ``ShaRP`` is an open source library with the implementation of the ShaRP
 algorithm (Shapley for Rankings and Preferences), a framework that can be used
