@@ -24,6 +24,24 @@ from sharp.utils import check_inputs
 # This will help make our visualizations look beautiful :)
 plt.style.use("seaborn-v0_8-whitegrid")
 
+
+#############################################################################################
+# Let's start with data preparation. For this example, we chose The ACSIncome dataset which
+# is one of five datasets created by Ding et al. as an improved alternative to the
+# popular UCI Adult dataset. Data is provided for all 50 states and Puerto Rico. Its initial
+# purpose was to predict whether US working adults’ yearly income is above $50,000.
+# The features are the following:
+# - AGEP: age
+# - COW: class of worker
+# - SCHL: educational attainment
+# - MAR: marital status
+# - OCCP: occupation
+# - POBP: place of birth
+# - RELP: relationship
+# - WKHP: usual hours worked per week
+# - SEX: sex
+# - RAC1P: recoded detailed race code
+
 X, y = fetch_openml(
     data_id=43141, parser="auto", return_X_y=True, read_csv_kwargs={"nrows": 150}
 )

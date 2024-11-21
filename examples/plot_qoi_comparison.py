@@ -107,11 +107,13 @@ xai_score.fit(X)
 # Let's take a look at some contributions for both QOIs
 
 contributions_rank = xai_rank.all(X)
-contributions_rank[:5]
+print(contributions_rank[:5])
 
 contributions_score = xai_score.all(X)
-contributions_score[:5]
+print(contributions_score[:5])
 
+
+#############################################################################################
 # Now let's plot the waterfall plots for different universities and check
 # if the results for `score` and `rank` differ
 
@@ -182,3 +184,15 @@ plt.title("Indiana University - Waterfall Plot for Score")
 
 plt.tight_layout()
 plt.show()
+
+
+#############################################################################################
+# As the result we see that for each university, the importance of features for each QOI
+# may be either very similar or differ a lot. For Stanford University, the feature `Systems` 
+# is the most impactful for `rank` and is followed by the feature `Interdisciplinary`, while
+# for `score`, it's vice versa. For University of Texas, the features have the same order of
+# importance for both its QOIs, and all of them contribute to improving the `score`/`rank` 
+# of the university. On the contrary, for Indiana University, while the order of features by 
+# their importance is the same as for Stanford University for `rank` QOI, in the case of 
+# `score`, features `AI` and `Theory` contribute negatively, and `AI` is the most impactful 
+# feature. 

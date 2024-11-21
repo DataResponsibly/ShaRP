@@ -15,14 +15,30 @@ from sharp.utils import check_inputs
 
 plt.style.use("seaborn-v0_8-whitegrid")
 
-#########################################################################################
-# Let's start with data preparation
+#############################################################################################
+# Let's start with data preparation. For this example, we chose The ACSIncome dataset which
+# is one of five datasets created by Ding et al. as an improved alternative to the
+# popular UCI Adult dataset. Data is provided for all 50 states and Puerto Rico. Its initial
+# purpose was to predict whether US working adults’ yearly income is above $50,000.
+# The features are the following:
+# - AGEP: age
+# - COW: class of worker
+# - SCHL: educational attainment
+# - MAR: marital status
+# - OCCP: occupation
+# - POBP: place of birth
+# - RELP: relationship
+# - WKHP: usual hours worked per week
+# - SEX: sex
+# - RAC1P: recoded detailed race code
+
 
 X, y = fetch_openml(
     data_id=43141, parser="auto", return_X_y=True, read_csv_kwargs={"nrows": 150}
 )
 
-# Get the indices of samples that belong to each group
+# Get the indices of samples that belong to each group. 
+# We will use SEX as sensitive attribute
 adv_idx = X[X["SEX"] == 1].index
 dis_idx = X[X["SEX"] == 2].index
 
@@ -64,7 +80,7 @@ xai.fit(X)
 
 
 #########################################################################################
-# Let's take a look at contributions for both QOIs
+# Let's compute contributions for the whole dataset
 
 contributions = xai.all(X)
 
@@ -83,6 +99,17 @@ for ax, idx, title in zip(
 
 plt.show()
 
+
+#########################################################################################
+# On the plots, feature contributions are shown across different strata, e.g., for 
+# top-20% of ranked individuals, for the whole dataset (i.e., `All`), and both advantaged 
+# and disadvantaged groups. For the advantaged group, age (AGEP) exhibits stable 
+# importance across all strata, while the contributions of worked hours (WKHP) and 
+# educational attainment (SCHL) increase as we move toward lower-ranked individuals. 
+# Conversely, for the disadvantaged group, the importance of `AGEP` decreases with lower 
+# ranks, while `WKHP` and `SCHL` remain relatively stable.
+
+
 #########################################################################################
 # We can also compare contributions across groups overall:
 
@@ -91,3 +118,7 @@ X.loc[adv_idx, "Sex"] = "Male"
 X.loc[dis_idx, "Sex"] = "Female"
 xai.plot.box(X, scores, contributions, group="Sex")
 plt.show()
+
+# We can see that for males, the importance of `WKHP` is lower compared to females, while
+# `AGEP` shows also a positive contribution to the outcomes, indicating that older 
+# individuals are more likely to achieve favorable results.
