@@ -188,11 +188,11 @@ plt.show()
 
 #############################################################################################
 # As the result we see that for each university, the importance of features for each QOI
-# may be either very similar or differ a lot. For Stanford University, the feature `Systems` 
+# may be either very similar or differ a lot. For Stanford University, the feature `Systems`
 # is the most impactful for `rank` and is followed by the feature `Interdisciplinary`, while
 # for `score`, it's vice versa. For University of Texas, the features have the same order of
-# importance for both its QOIs, and all of them contribute to improving the `score`/`rank` 
-# of the university. On the contrary, for Indiana University, while the order of features by 
-# their importance is the same as for Stanford University for `rank` QOI, in the case of 
-# `score`, features `AI` and `Theory` contribute negatively, and `AI` is the most impactful 
-# feature. 
+# importance for both its QOIs, and all of them contribute to improving the `score`/`rank`
+# of the university. On the contrary, for Indiana University, while the order of features by
+# their importance is the same as for Stanford University for `rank` QOI, in the case of
+# `score`, features `AI` and `Theory` contribute negatively, and `AI` is the most impactful
+# feature.

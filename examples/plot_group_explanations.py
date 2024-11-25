@@ -37,7 +37,7 @@ X, y = fetch_openml(
     data_id=43141, parser="auto", return_X_y=True, read_csv_kwargs={"nrows": 150}
 )
 
-# Get the indices of samples that belong to each group. 
+# Get the indices of samples that belong to each group.
 # We will use SEX as sensitive attribute
 adv_idx = X[X["SEX"] == 1].index
 dis_idx = X[X["SEX"] == 2].index
@@ -101,12 +101,12 @@ plt.show()
 
 
 #########################################################################################
-# On the plots, feature contributions are shown across different strata, e.g., for 
-# top-20% of ranked individuals, for the whole dataset (i.e., `All`), and both advantaged 
-# and disadvantaged groups. For the advantaged group, age (AGEP) exhibits stable 
-# importance across all strata, while the contributions of worked hours (WKHP) and 
-# educational attainment (SCHL) increase as we move toward lower-ranked individuals. 
-# Conversely, for the disadvantaged group, the importance of `AGEP` decreases with lower 
+# On the plots, feature contributions are shown across different strata, e.g., for
+# top-20% of ranked individuals, for the whole dataset (i.e., `All`), and both advantaged
+# and disadvantaged groups. For the advantaged group, age (AGEP) exhibits stable
+# importance across all strata, while the contributions of worked hours (WKHP) and
+# educational attainment (SCHL) increase as we move toward lower-ranked individuals.
+# Conversely, for the disadvantaged group, the importance of `AGEP` decreases with lower
 # ranks, while `WKHP` and `SCHL` remain relatively stable.
 
 
@@ -120,5 +120,5 @@ xai.plot.box(X, scores, contributions, group="Sex")
 plt.show()
 
 # We can see that for males, the importance of `WKHP` is lower compared to females, while
-# `AGEP` shows also a positive contribution to the outcomes, indicating that older 
+# `AGEP` shows also a positive contribution to the outcomes, indicating that older
 # individuals are more likely to achieve favorable results.
