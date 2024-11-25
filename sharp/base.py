@@ -78,6 +78,16 @@ class ShaRP(BaseEstimator):
         self._y = kwargs["y"] if "y" in kwargs.keys() else None
 
     def fit(self, X, y=None):
+        """
+        Fit a ShaRP model to the given data.
+
+        Parameters
+        ----------
+        X: array-like, shape (n_samples, n_features)
+            Reference dataset used to compute explanations.
+        y: array-like, shape (n_samples,), default=None
+            Target variable.
+        """
         X_, y_ = check_inputs(X, y)
 
         self._X = X_
@@ -106,7 +116,31 @@ class ShaRP(BaseEstimator):
 
     def individual(self, sample, X=None, y=None, **kwargs):
         """
-        set_cols_idx should be passed in kwargs if measure is marginal
+        Provides an explanation for individual sample point based on reference dataset
+
+        .. note:: set_cols_idx should be passed in kwargs if measure is marginal
+
+        Parameters
+        ----------
+        sample : array-like, shape (n_features,) or int
+            Sample to calculate explanation for.
+            Can be passed directly or as an index in a reference dataset.
+        X : array-like, shape (n_samples, n_features), default=None
+            Reference dataset used to compute explanations.
+        y : array-like, shape (n_samples,), default=None
+            Target variable.
+        set_cols_idx : 1D array-like, default=None
+            Features in the coalition used to construct composite points to estimate
+            feature importance.
+        coalition_size : int, default=n_features-1
+            Maximum number of features used during the construction of composite points.
+        sample_size : int, default=n_samples
+            Maximum number of samples used during the construction of composite points.
+
+        Returns
+        -------
+        1D array-like, shape (n_features,)
+            Influences of each feature on individual sample.
         """
         if X is None:
             X = self.qoi_.X
@@ -157,7 +191,31 @@ class ShaRP(BaseEstimator):
 
     def feature(self, feature, X=None, y=None, **kwargs):
         """
-        set_cols_idx should be passed in kwargs if measure is marginal
+        Provides an explanation for all sample points for a specified feature
+        based on reference dataset
+
+        .. note:: set_cols_idx should be passed in kwargs if measure is marginal
+
+        Parameters
+        ----------
+        feature : str or int
+            Name or index of the targeted feature
+        X : array-like, shape (n_samples, n_features), default=None
+            Reference dataset used to compute explanations.
+        y : array-like, shape (n_samples,), default=None
+            Target variable.
+        set_cols_idx : 1D array-like, default=None
+            Features in the coalition used to construct composite points to estimate
+            feature importance.
+        coalition_size : int, default=n_features-1
+            Maximum number of features used during the construction of composite points.
+        sample_size : int, default=n_samples
+            Maximum number of samples used during the construction of composite points.
+
+        Returns
+        -------
+        float
+            Average contributions of a specific feature along all sample points.
         """
         X_, y_ = check_inputs(X, y)
 
@@ -204,7 +262,30 @@ class ShaRP(BaseEstimator):
 
     def all(self, X=None, y=None, **kwargs):
         """
-        set_cols_idx should be passed in kwargs if measure is marginal
+        Provides an explanation for all sample points based on reference dataset
+
+        .. note:: set_cols_idx should be passed in kwargs if measure is marginal
+
+        Parameters
+        ----------
+        feature : str or int
+            Name or index of the targeted feature
+        X : array-like, shape (n_samples, n_features), default=None
+            Reference dataset used to compute explanations.
+        y : array-like, shape (n_samples,), default=None
+            Target variable.
+        set_cols_idx : 1D array-like, default=None
+            Features in the coalition used to construct composite points to estimate
+            feature importance.
+        coalition_size : int, default=n_features-1
+            Maximum number of features used during the construction of composite points.
+        sample_size : int, default=n_samples
+            Maximum number of samples used during the construction of composite points.
+
+        Returns
+        -------
+        array-like, shape (n_samples, n_features)
+            Contribution of each feature to a point's qoi
         """
         X_ref = self._X if self._X is not None else check_inputs(X)[0]
         X_, y_ = check_inputs(X, y)
@@ -223,10 +304,33 @@ class ShaRP(BaseEstimator):
     def pairwise(self, sample1, sample2, **kwargs):
         """
         Compare two samples, or one sample against a set of samples.
-        If `sample1` or `sample2` are of type `int` or `list`, `X` also needs to be
-        passed.
+        If `sample1` or `sample2` are of type `int` or `list`, `X` also needs
+        to be passed.
 
-        set_cols_idx should be passed in kwargs if measure is marginal
+        .. note:: set_cols_idx should be passed in kwargs if measure is marginal
+
+        Parameters
+        ----------
+        sample1 : array-like or int or list
+            Sample or indices of samples that are used to calculate contributions.
+        sample2 : array-like or int or list
+            Sample or indices of samples against which contributions are calculated.
+        X : array-like, shape (n_samples, n_features), default=None
+            Reference dataset used to compute explanations.
+        y : array-like, shape (n_samples,), default=None
+            Target variable.
+        set_cols_idx : 1D array-like, default=None
+            Features in the coalition used to construct composite points to estimate
+            feature importance.
+        coalition_size : int, default=n_features-1
+            Maximum number of features used during the construction of composite points.
+        sample_size : int, default=n_samples
+            Maximum number of samples used during the construction of composite points.
+
+        Returns
+        -------
+        array-like
+            Contributions of each feature to each `sample1` point's qoi
         """
         if "X" in kwargs.keys():
             X = kwargs["X"]
@@ -267,8 +371,35 @@ class ShaRP(BaseEstimator):
 
     def pairwise_set(self, samples1, samples2, **kwargs):
         """
-        set_cols_idx should be passed in kwargs if measure is marginal
-        pairs is a list of tuples of indexes
+        Pairwise comparison of two samples sets.
+
+        .. note:: if elements of `samples1` or `samples2` are of type `int` or `list`,
+            `X` also needs to be passed.
+        .. note:: set_cols_idx should be passed in kwargs if measure is marginal
+
+        Parameters
+        ----------
+        samples1 : array-like
+            Set of samples or indices that are used to calculate contributions.
+        samples2 : array-like
+            Set of samples or indices against which contributions are calculated.
+        X : array-like, shape (n_samples, n_features), default=None
+            Reference dataset used to compute explanations.
+        y : array-like, shape (n_samples,), default=None
+            Target variable.
+        set_cols_idx : 1D array-like, default=None
+            Features in the coalition used to construct composite points to estimate
+            feature importance.
+        coalition_size : int, default=n_features-1
+            Maximum number of features used during the construction of composite points.
+        sample_size : int, default=n_samples
+            Maximum number of samples used during the construction of composite points.
+
+        Returns
+        -------
+        array-like
+            Contributions for each sample from `samples1` against respective sample in
+             `samples2`
         """
         contributions = parallel_loop(
             lambda samples: self.pairwise(*samples, verbose=False, **kwargs),
