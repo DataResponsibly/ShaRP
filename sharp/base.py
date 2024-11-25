@@ -12,22 +12,25 @@ from .visualization._visualization import ShaRPViz
 
 class ShaRP(BaseEstimator):
     """
-    The ShaRP (Shapley for Rankings and Preferences) class provides a novel framework for
-    explaining the contributions of features to various aspects of ranked outcomes. Built
-    on Shapley values, it quantifies feature importance for rankings, which is fundamentally
-    different from feature importance in classification or regression. This framework is essential
-    for understanding, auditing, and improving algorithmic ranking systems in critical domains
-    such as hiring, education, and lending.
+    The ShaRP (Shapley for Rankings and Preferences) class provides a novel framework
+    for explaining the contributions of features to various aspects of ranked
+    outcomes. Built on Shapley values, it quantifies feature importance for rankings,
+    which is fundamentally different from feature importance in classification or
+    regression. This framework is essential for understanding, auditing,
+    and improving algorithmic ranking systems in critical domains such as
+    hiring, education, and lending.
 
-    ShaRP extends the Quantitative Input Influence (QII) framework to compute feature contributions
-    to multiple ranking-specific Quantities of Interest (QoIs). These QoIs include:
+    ShaRP extends the Quantitative Input Influence (QII) framework to compute feature
+    contributions to multiple ranking-specific Quantities of Interest (QoIs).
+    These QoIs include:
     - Score: Contribution of features to an item's score.
     - Rank: Impact of features on an item's rank.
     - Top-k: Influence of features on whether an item appears in the top-k positions.
-    - Pairwise Preference: Contribution of features to the relative order between two items.
+    - Pairwise Preference: Contribution of features to the relative order between
+    two items.
 
-    ShaRP uses Shapley values, a cooperative game theory concept, to distribute the "value" of
-    a ranked outcome among the features. For each QoI, the class:
+    ShaRP uses Shapley values, a cooperative game theory concept, to distribute
+    the "value" of a ranked outcome among the features. For each QoI, the class:
     - Constructs feature coalitions by masking subsets of features.
     - Evaluates the impact of these coalitions on the QoI using a payoff function.
     - Aggregates the marginal contributions of features across all possible coalitions
@@ -45,10 +48,12 @@ class ShaRP(BaseEstimator):
         - "top-k" : Contribution to whether an item appears in the top-k.
         - "pairwise" : Contribution to the relative order between two items.
         By default, in method ``fit()``, "rank" will be used.
-        If QoI is None, ``target_function`` and parameters ``X`` and ``y`` need to be passed.
+        If QoI is None, ``target_function`` and parameters ``X`` and ``y``
+        need to be passed.
 
     target_function : function, optional
-        A custom function defining the outcome of interest for the data. Ignored if `qoi` is specified.
+        A custom function defining the outcome of interest for the data.
+        Ignored if `qoi` is specified.
 
     measure : str, default="shapley"
         The method used to compute feature contributions. Options include:
