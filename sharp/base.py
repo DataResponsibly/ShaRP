@@ -13,23 +13,25 @@ from .visualization._visualization import ShaRPViz
 class ShaRP(BaseEstimator):
     """
     The ShaRP (Shapley for Rankings and Preferences) class provides a novel framework for
-    explaining the contributions of features to various aspects of ranked outcomes. Built on Shapley values,
-    it quantifies feature importance for rankings, which is fundamentally different from feature importance
-    in classification or regression. This framework is essential for understanding, auditing, and improving
-    algorithmic ranking systems in critical domains such as hiring, education, and lending.
+    explaining the contributions of features to various aspects of ranked outcomes. Built
+    on Shapley values, it quantifies feature importance for rankings, which is fundamentally
+    different from feature importance in classification or regression. This framework is essential
+    for understanding, auditing, and improving algorithmic ranking systems in critical domains
+    such as hiring, education, and lending.
 
-    ShaRP extends the Quantitative Input Influence (QII) framework to compute feature contributions to multiple
-    ranking-specific Quantities of Interest (QoIs). These QoIs include:
+    ShaRP extends the Quantitative Input Influence (QII) framework to compute feature contributions
+    to multiple ranking-specific Quantities of Interest (QoIs). These QoIs include:
     - Score: Contribution of features to an item's score.
     - Rank: Impact of features on an item's rank.
     - Top-k: Influence of features on whether an item appears in the top-k positions.
     - Pairwise Preference: Contribution of features to the relative order between two items.
 
-    ShaRP uses Shapley values, a cooperative game theory concept, to distribute the "value" of a ranked outcome among the features.
-    For each QoI, the class:
+    ShaRP uses Shapley values, a cooperative game theory concept, to distribute the "value" of
+    a ranked outcome among the features. For each QoI, the class:
     - Constructs feature coalitions by masking subsets of features.
     - Evaluates the impact of these coalitions on the QoI using a payoff function.
-    - Aggregates the marginal contributions of features across all possible coalitions to compute their Shapley values.
+    - Aggregates the marginal contributions of features across all possible coalitions
+    to compute their Shapley values.
 
     This algorithm is an implementation of Shapley for Rankings and Preferences (ShaRP),
     as presented in [1]_.
@@ -56,11 +58,12 @@ class ShaRP(BaseEstimator):
         - "banzhaff"
 
     sample_size : int, optional
-        The number of perturbations to apply per data point when calculating feature importance.
-        Default is `None`, which uses all available samples.
+        The number of perturbations to apply per data point when calculating
+        feature importance. Default is `None`, which uses all available samples.
 
     coalition_size : int, optional
-        The maximum size of feature coalitions to consider. Default is `None`, which uses all features except one.
+        The maximum size of feature coalitions to consider. Default is `None`,
+        which uses all features except one.
 
     replace : bool, default=False
         Whether to sample feature values with replacement during perturbation.
@@ -69,7 +72,8 @@ class ShaRP(BaseEstimator):
         Seed or random number generator for reproducibility. Default is `None`.
 
     n_jobs : int, default=1
-        Number of jobs to run in parallel for computations. Use `-1` to use all available processors.
+        Number of jobs to run in parallel for computations. Use `-1` to use all
+        available processors.
 
     verbose : int, default=0
         Verbosity level. Use 0 for no output and higher numbers for more verbose output.
