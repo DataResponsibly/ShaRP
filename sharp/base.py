@@ -12,34 +12,81 @@ from .visualization._visualization import ShaRPViz
 
 class ShaRP(BaseEstimator):
     """
-    Explains the contributions of features to different aspects of a ranked outcome,
-    based on Shapley values.
+    The ShaRP (Shapley for Rankings and Preferences) class provides a novel framework
+    for explaining the contributions of features to various aspects of ranked
+    outcomes. Built on Shapley values, it quantifies feature importance for rankings,
+    which is fundamentally different from feature importance in classification or
+    regression. This framework is essential for understanding, auditing,
+    and improving algorithmic ranking systems in critical domains such as
+    hiring, education, and lending.
+
+    ShaRP extends the Quantitative Input Influence (QII) framework to compute feature
+    contributions to multiple ranking-specific Quantities of Interest (QoIs).
+    These QoIs include:
+    - Score: Contribution of features to an item's score.
+    - Rank: Impact of features on an item's rank.
+    - Top-k: Influence of features on whether an item appears in the top-k positions.
+    - Pairwise Preference: Contribution of features to the relative order between
+    two items.
+
+    ShaRP uses Shapley values, a cooperative game theory concept, to distribute
+    the "value" of a ranked outcome among the features. For each QoI, the class:
+    - Constructs feature coalitions by masking subsets of features.
+    - Evaluates the impact of these coalitions on the QoI using a payoff function.
+    - Aggregates the marginal contributions of features across all possible coalitions
+    to compute their Shapley values.
 
     This algorithm is an implementation of Shapley for Rankings and Preferences (ShaRP),
     as presented in [1]_.
 
-    If QoI is None, ``target_function`` and parameters ``X`` and ``y`` need to be passed.
-    if QoI is not None, ``target_function`` is ignored.
-
     Parameters
     ----------
-    estimator : ML classifier
+    qoi : str, optional
+        The quantity of interest to compute feature contributions for. Options include:
+        - "score" : Contribution to an item's score.
+        - "rank" : Contribution to an item's rank.
+        - "top-k" : Contribution to whether an item appears in the top-k.
+        - "pairwise" : Contribution to the relative order between two items.
+        By default, in method ``fit()``, "rank" will be used.
+        If QoI is None, ``target_function`` and parameters ``X`` and ``y``
+        need to be passed.
 
-    qoi : Quantity of interest, default: "rank"
+    target_function : function, optional
+        A custom function defining the outcome of interest for the data.
+        Ignored if `qoi` is specified.
 
-    measure : measure used to estimate feature contributions (unary, set, banzhaf, etc.)
+    measure : str, default="shapley"
+        The method used to compute feature contributions. Options include:
+        - "set"
+        - "marginal"
+        - "shapley"
+        - "banzhaff"
 
-    sample_size : amount of perturbations applied per data point
+    sample_size : int, optional
+        The number of perturbations to apply per data point when calculating
+        feature importance. Default is `None`, which uses all available samples.
 
-    replace : Whether to sample with replacement
+    coalition_size : int, optional
+        The maximum size of feature coalitions to consider. Default is `None`,
+        which uses all features except one.
 
-    predict_method : estimator's function that provides inference
+    replace : bool, default=False
+        Whether to sample feature values with replacement during perturbation.
 
-    random_state : random seed
+    random_state : int, RandomState instance, or None, optional
+        Seed or random number generator for reproducibility. Default is `None`.
 
-    X : reference input
+    n_jobs : int, default=1
+        Number of jobs to run in parallel for computations. Use `-1` to use all
+        available processors.
 
-    y : target
+    verbose : int, default=0
+        Verbosity level. Use 0 for no output and higher numbers for more verbose output.
+
+    kwargs : dict, optional
+        Additional parameters such as:
+        - ``X`` : array-like, reference input data.
+        - ``y`` : array-like, target outcomes for the reference data.
 
     Notes
     -----

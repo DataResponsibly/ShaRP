@@ -25,6 +25,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sharp import ShaRP
 
+#####################################################################################
+# Let's get the data first. We will use the dataset that classifies people described
+# by a set of attributes as good or bad credit risks.
+
 df = fetch_openml(data_id=31, parser="auto")["frame"]
 df.head(5)
 
