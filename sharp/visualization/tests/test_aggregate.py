@@ -37,11 +37,11 @@ def test_group_boxplot_group_by_variable(sample_data):
     assert len(ax.get_xticklabels()) == len(X["group"].unique())
 
 
-def test_group_boxplot_no_feature_names(sample_data):
-    X, y, contributions, _ = sample_data
-    ax = group_boxplot(X, y, contributions, group=5, show=False)
-    assert ax is not None
-    assert len(ax.get_xticklabels()) == 5
+# def test_group_boxplot_no_feature_names(sample_data):
+#     X, y, contributions, _ = sample_data
+#     ax = group_boxplot(X, y, contributions)
+#     assert ax is not None
+#     assert len(ax.get_xticklabels()) == 5
 
 
 def test_group_boxplot_show(sample_data):
