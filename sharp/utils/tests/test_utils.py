@@ -28,5 +28,7 @@ def test_parallel_loop():
     assert results == [x * x for x in iterable]
 
     # Test parallel loop with progress bar
-    results = parallel_loop(square, iterable, n_jobs=2, progress_bar=True, description="Test")
+    results = parallel_loop(
+        square, iterable, n_jobs=2, progress_bar=True, description="Test"
+    )
     assert results == [x * x for x in iterable]
