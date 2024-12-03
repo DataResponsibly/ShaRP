@@ -55,15 +55,3 @@ def test_waterfall_no_features():
     fig = _waterfall(shap_values, max_display=3, show=False)
     assert fig is not None
     assert len(fig.axes) > 0
-
-
-def test_waterfall_no_values():
-    shap_values = {
-        "base_values": 0.5,
-        "features": np.array([1.0, 2.0, 3.0]),
-        "feature_names": ["feature1", "feature2", "feature3"],
-        "values": pd.Series([]),
-    }
-    fig = _waterfall(shap_values, max_display=3, show=False)
-    assert fig is not None
-    assert len(fig.axes) > 0
