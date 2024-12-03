@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from sharp.utils._utils import _optional_import
-from _visualization import ShaRPViz
+from sharp.visualization._visualization import ShaRPViz
 
 
 @pytest.fixture
