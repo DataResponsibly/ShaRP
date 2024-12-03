@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from sharp.visualization._waterfall import format_value, _waterfall, waterfall
+from sharp.visualization._waterfall import format_value, _waterfall
 
 
 @pytest.mark.parametrize(
