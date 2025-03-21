@@ -14,8 +14,8 @@ def mock_sharp():
     class MockSharp:
         def __init__(self):
             self.feature_names_ = np.array(["Feature1", "Feature2", "Feature3"])
-            self.qoi="rank"
-            self.measure="shapley"
+            self.qoi = "rank"
+            self.measure = "shapley"
 
     return MockSharp()
 
