@@ -73,4 +73,8 @@ def check_qoi(qoi, target_function=None, X=None):
         return qoi
 
     qoi = get_qoi(qoi)(**params)
+
+    if qoi._qoi_type == "rank":
+        qoi.sort_base()
+
     return qoi

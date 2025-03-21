@@ -1,7 +1,27 @@
 from abc import ABCMeta, abstractmethod
-from copy import deepcopy
 import numpy as np
 from sklearn.base import BaseEstimator
+from multiprocessing import Manager
+
+
+class TargetFunctionWrapper:
+
+    def __init__(self, target_function):
+        self.target_function = target_function
+        self._hashmap = Manager().dict()
+
+    def _check_hash(self, row):
+        row_str = str(row)
+        try:
+            return self._hashmap[row_str]
+        except KeyError:
+            pred = self.target_function(row)
+            self._hashmap[row_str] = pred
+            return pred
+
+    def __call__(self, rows):
+        results = [self._check_hash(row.reshape(1, -1)) for row in rows]
+        return np.array(results).reshape(-1)
 
 
 class BaseQoI(BaseEstimator, metaclass=ABCMeta):
@@ -25,9 +45,11 @@ class BaseQoI(BaseEstimator, metaclass=ABCMeta):
 
     _qoi_type = "score"
 
-    def __init__(self, target_function=None, X=None):
-        # NOTE: This parameter name is not descriptive enough
-        self.target_function = target_function
+    def __init__(self, target_function=None, X=None, cache=True):
+        self.target_function = (
+            TargetFunctionWrapper(target_function) if cache else target_function
+        )
+        self.cache = cache
         self.X = X
 
     def estimate(self, rows):
@@ -98,6 +120,13 @@ class BaseRankQoI(BaseQoI, metaclass=ABCMeta):
     """
 
     _qoi_type = "rank"
+    _X_sorted = False
+
+    def sort_base(self):
+        idx_sorted = np.argsort(self.target_function(self.X))
+        self.X = self.X[idx_sorted]
+        self._X_sorted = True
+        return self
 
     def rank(self, X, X_base=None):
         """
@@ -122,19 +151,29 @@ class BaseRankQoI(BaseQoI, metaclass=ABCMeta):
             )
             raise ValueError(msg)
         elif X_base is None:
-            X_base = self.X
+            if not self._X_sorted:
+                self.sort_base()
 
             if not hasattr(self, "_scores_base"):
-                self._scores_base = self.target_function(X_base)
+                self._scores_base = self.target_function(self.X)
 
-            scores_base = deepcopy(self._scores_base)
+            X_base = self.X
+            scores_base = self._scores_base
+
+            scores = self.target_function(X)
+            ranks_all = (
+                scores_base.shape[0]
+                - np.searchsorted(scores_base, scores, side="left")
+                - 1
+            )
+            return ranks_all
         else:
             scores_base = self.target_function(X_base)
 
-        ranks_all = []
-        for row in X:
-            score = self.target_function(row.reshape(1, -1))[0]
-            rank = (scores_base > score).sum() + 1
-            ranks_all.append(rank)
+            ranks_all = []
+            for row in X:
+                score = self.target_function(row.reshape(1, -1))[0]
+                rank = (scores_base > score).sum() + 1
+                ranks_all.append(rank)
 
-        return np.array(ranks_all)
+            return np.array(ranks_all)
