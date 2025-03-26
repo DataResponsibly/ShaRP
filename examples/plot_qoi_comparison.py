@@ -2,7 +2,7 @@
 Comparing different Quantities of Interest (QOIs) in ShaRP
 ==========================================================
 
-This example demonstrates how to use ShaRP with different QOIs to analyze 
+This example demonstrates how to use ShaRP with different QOIs to analyze
 and explain ranking outcomes.
 
 In this example, we will:
