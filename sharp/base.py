@@ -3,6 +3,7 @@ Base object used to set up explainability objects.
 """
 
 import numpy as np
+from itertools import product
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from .utils._parallelize import parallel_loop
@@ -107,6 +108,7 @@ class ShaRP(BaseEstimator):
         coalition_size=None,
         replace=False,
         random_state=None,
+        cache=True,
         n_jobs=1,
         verbose=0,
         **kwargs
@@ -118,6 +120,7 @@ class ShaRP(BaseEstimator):
         self.coalition_size = coalition_size
         self.replace = replace
         self.random_state = random_state
+        self.cache = cache
         self.n_jobs = n_jobs
         self.verbose = verbose
         self.plot = ShaRPViz(self)
@@ -142,20 +145,14 @@ class ShaRP(BaseEstimator):
 
         self._rng = check_random_state(self.random_state)
 
-        if self.qoi is None:
-            self.qoi_ = check_qoi(
-                "rank",
-                target_function=self.target_function,
-                X=X_,
-            )
-        elif isinstance(self.qoi, str):
-            self.qoi_ = check_qoi(
-                self.qoi,
-                target_function=self.target_function,
-                X=X_,
-            )
-        else:
-            self.qoi_ = self.qoi
+        qoi = self.qoi if self.qoi is not None else "rank"
+
+        self.qoi_ = check_qoi(
+            qoi,
+            target_function=self.target_function,
+            X=X_,
+            cache=self.cache,
+        )
 
         self.feature_names_ = check_feature_names(X)
 
@@ -216,6 +213,7 @@ class ShaRP(BaseEstimator):
         else:
             sample_size = X_.shape[0]
 
+        n_jobs = kwargs["n_jobs"] if "n_jobs" in kwargs.keys() else self.n_jobs
         verbosity = kwargs["verbose"] if "verbose" in kwargs.keys() else self.verbose
         influences = parallel_loop(
             lambda col_idx: self.measure_(
@@ -230,7 +228,7 @@ class ShaRP(BaseEstimator):
                 rng=self._rng,
             ),
             range(len(self.feature_names_)),
-            n_jobs=self.n_jobs,
+            n_jobs=n_jobs,
             progress_bar=verbosity,
         )
 
@@ -334,19 +332,54 @@ class ShaRP(BaseEstimator):
         array-like, shape (n_samples, n_features)
             Contribution of each feature to a point's qoi
         """
-        X_ref = self._X if self._X is not None else check_inputs(X)[0]
+
         X_, y_ = check_inputs(X, y)
 
+        if "set_cols_idx" in kwargs.keys():
+            set_cols_idx = kwargs["set_cols_idx"]
+        else:
+            set_cols_idx = None
+
+        if "coalition_size" in kwargs.keys():
+            coalition_size = kwargs["coalition_size"]
+        elif self.coalition_size is not None:
+            coalition_size = self.coalition_size
+        else:
+            coalition_size = X_.shape[-1] - 1
+
+        if "sample_size" in kwargs.keys():
+            sample_size = kwargs["sample_size"]
+        elif self.sample_size is not None:
+            sample_size = self.sample_size
+        else:
+            sample_size = X_.shape[0]
+
+        idx_samples = range(X_.shape[0])
+        idx_cols = range(X_.shape[1])
+
         influences = parallel_loop(
-            lambda sample_idx: self.individual(
-                X_[sample_idx], X_ref, verbose=False, **kwargs
+            lambda sample_col_idx: (
+                sample_col_idx,
+                self.measure_(
+                    row=X_[sample_col_idx[0]],
+                    col_idx=sample_col_idx[1],
+                    set_cols_idx=set_cols_idx,
+                    X=self.qoi_.X,
+                    qoi=self.qoi_,
+                    sample_size=sample_size,
+                    coalition_size=coalition_size,
+                    replace=self.replace,
+                    rng=self._rng,
+                ),
             ),
-            range(X_.shape[0]),
+            list(product(idx_samples, idx_cols)),
             n_jobs=self.n_jobs,
             progress_bar=self.verbose,
         )
-
-        return np.array(influences)
+        inf_ = np.full(X_.shape, np.nan)
+        for (row_idx, col_idx), contr_ in influences:
+            inf_[row_idx, col_idx] = contr_
+        return inf_
 
     def pairwise(self, sample1, sample2, **kwargs):
         """
