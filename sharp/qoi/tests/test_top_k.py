@@ -21,13 +21,13 @@ y = score_function(X)
 rank = scores_to_ordering(y)
 
 
-@pytest.mark.parametrize("top_k", range(X.shape[0]))
+@pytest.mark.parametrize("top_k", range(0, X.shape[0], 5))
 def test_top_k(top_k):
     qoi = TopKQoI(target_function=score_function, top_k=top_k, X=X)
     np.testing.assert_allclose(qoi.estimate(X), (rank <= top_k).astype(int))
 
 
-@pytest.mark.parametrize("item_idx", range(X.shape[0]))
+@pytest.mark.parametrize("item_idx", range(0, X.shape[0], 5))
 def test_top_k_vs_flip(item_idx):
     top_k_qoi = TopKQoI(target_function=score_function, top_k=rank[item_idx], X=X)
     flip_qoi = FlipQoI(

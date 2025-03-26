@@ -17,7 +17,7 @@ from sklearn.utils._testing import _get_func_name
 from sklearn.utils._testing import ignore_warnings
 from sklearn.utils.estimator_checks import _enforce_estimator_tags_y
 from sklearn.utils.estimator_checks import _enforce_estimator_tags_X
-from sklearn.utils.estimator_checks import _construct_instance
+from sklearn.utils._test_common.instance_generator import _construct_instances
 from sklearn.utils.deprecation import _is_deprecated
 
 import sharp
@@ -187,7 +187,7 @@ def test_fit_docstring_attributes(name, Obj):
     doc = docscrape.ClassDoc(Obj)
     attributes = doc["Attributes"]
 
-    est = _construct_instance(Obj)
+    est = next(_construct_instances(Obj))
 
     X, y = make_classification(
         n_samples=20,

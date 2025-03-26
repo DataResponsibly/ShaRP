@@ -40,29 +40,27 @@ def check_measure(measure):
         return measure
 
 
-def check_qoi(qoi, target_function=None, X=None):
+def check_qoi(qoi, target_function=None, X=None, cache=True):
     """
     If None, return a default function. If str, grab function from a dict. if function,
     check if it's valid and return itself.
     """
+    # Target function is always required regardless of QoI
+    params = {"target_function": target_function, "cache": cache}
+    define_qoi = True
     if isinstance(qoi, str):
-        # Target function is always required regardless of QoI
-        params = {"target_function": target_function}
+
+        params["X"] = X
 
         if target_function is None:
             msg = "If `qoi` is of type `str`, `target_function` cannot be None."
             raise TypeError(msg)
 
-        if get_qoi(qoi)._qoi_type == "rank":
-            # Add dataset to list of parameters if QoI is rank-based
-            params["X"] = X
-
-            if X is None:
-                msg = "If `qoi` is `str` and rank-based, `X` cannot be None."
-                raise TypeError(msg)
+        if get_qoi(qoi)._qoi_type == "rank" and X is None:
+            msg = "If `qoi` is `str` and rank-based, `X` cannot be None."
+            raise TypeError(msg)
 
     elif qoi is None:
-        params = {"target_function": target_function}
         qoi = "qoi"
 
         if target_function is None:
@@ -70,9 +68,10 @@ def check_qoi(qoi, target_function=None, X=None):
             raise TypeError(msg)
 
     else:
-        return qoi
+        define_qoi = False
 
-    qoi = get_qoi(qoi)(**params)
+    if define_qoi:
+        qoi = get_qoi(qoi)(**params)
 
     if qoi._qoi_type == "rank":
         qoi.sort_base()

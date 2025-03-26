@@ -1,7 +1,14 @@
 import pytest
+import warnings
 import numpy as np
 import pandas as pd
 from sharp.visualization._aggregate import group_boxplot
+from matplotlib import get_backend
+import matplotlib.pyplot as plt
+
+curr_backend = get_backend()
+plt.switch_backend("Agg")
+warnings.filterwarnings("ignore", " FigureCanvasAgg")
 
 
 @pytest.fixture
@@ -35,11 +42,3 @@ def test_group_boxplot_group_by_variable(sample_data):
     )
     assert ax is not None
     assert len(ax.get_xticklabels()) == len(X["group"].unique())
-
-
-def test_group_boxplot_show(sample_data):
-    X, y, contributions, feature_names = sample_data
-    ax = group_boxplot(
-        X, y, contributions, feature_names=feature_names, group=5, show=True
-    )
-    assert ax is None

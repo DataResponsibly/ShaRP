@@ -161,10 +161,8 @@ class BaseRankQoI(BaseQoI, metaclass=ABCMeta):
             scores_base = self._scores_base
 
             scores = self.target_function(X)
-            ranks_all = (
-                scores_base.shape[0]
-                - np.searchsorted(scores_base, scores, side="left")
-                - 1
+            ranks_all = scores_base.shape[0] - np.searchsorted(
+                scores_base, scores, side="left"
             )
             return ranks_all
         else:
