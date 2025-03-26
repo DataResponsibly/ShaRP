@@ -16,15 +16,33 @@ details).
 Installation
 ------------
 
-ShaRP can be installed from source::
 
-    pip install git+https://github.com/DataResponsibly/ShaRP.git
+The easiest way to install ``sharp`` is using ``pip``::
 
-Alternatively::
+    # Install latest release
+    pip install -U xai-sharp
+
+    # Install additional dependencies (matplotlib) for plotting
+    pip install -U "xai-sharp[optional]"
+
+    # Install from source (may be unstable)
+    pip install -U git+https://github.com/DataResponsibly/ShaRP
+
+Alternatively, you can also clone the repository and install it from source::
     
+    # Clone and switch to the project's directory
     git clone https://github.com/DataResponsibly/ShaRP.git
     cd ShaRP
+
+    # Basic install
     pip install .
+
+    # Installs project requirements and the research package. Dependecy group
+    # "all" will also install the dependency groups shown below.
+    pip install ".[optional,tests,docs]"
+
+This generally only recommended if you intend to contribute to sharp, or extend it
+somehow.
 
 Reference
 ---------

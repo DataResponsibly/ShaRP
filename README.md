@@ -6,7 +6,7 @@
 <a href="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml"><img alt="Github Actions" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/ci.yml/badge.svg"></a>
 <a href="https://dataresponsibly.github.io/ShaRP/"><img alt="Documentation Status" src="https://github.com/DataResponsibly/ShaRP/actions/workflows/deploy-docs.yml/badge.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-<a href="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"><img alt="Python Versions" src="https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue"></a>
+<a href="https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.13-blue"><img alt="Python Versions" src="https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.13-blue"></a>
 <a href="https://badge.fury.io/py/xai-sharp"><img alt="Pypi Version" src="https://badge.fury.io/py/xai-sharp.svg"></a>
 <a href="https://pepy.tech/project/xai-sharp"><img alt="Downloads" src="https://static.pepy.tech/personalized-badge/xai-sharp?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=downloads"></a>
 <a href="https://doi.org/10.48550/arXiv.2401.16744"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2401.16744.svg"></a>
@@ -18,7 +18,7 @@ outcome, based on Shapley values.
 
 ## Installation
 
-A Python distribution of version >= 3.9 is required to run this
+A Python distribution of version >= 3.10 is required to run this
 project. ``ShaRP`` requires:
 
 - numpy (>= 1.20.0)
@@ -32,10 +32,17 @@ Some functions require Matplotlib (>= 2.2.3) for plotting.
 
 The easiest way to install ``sharp`` is using ``pip`` :
 
+    # Install latest release
+    pip install -U xai-sharp
+
+    # Install additional dependencies (matplotlib) for plotting
+    pip install -U "xai-sharp[optional]"
+
+    # Install unreleased version (may be unstable)
     pip install -U git+https://github.com/DataResponsibly/ShaRP
 
-The documentation includes more detailed [installation
-instructions](https://sharp.readthedocs.io/en/latest/getting-started.html).
+
+Installation instruction can also be found in the [documentation pages](https://dataresponsibly.github.io/ShaRP/).
 
 ### Installing from source
 
@@ -52,7 +59,7 @@ project with minimal effort:
 
     # Install project requirements and the research package. Dependecy group
     # "all" will also install the dependency groups shown below.
-    pip install .[optional,tests,docs] 
+    pip install ".[optional,tests,docs]"
 
 ## Citing ShaRP
 
