@@ -16,6 +16,15 @@ def check_feature_names(X):
 
     return feature_names
 
+def check_feature_names_dim(X, feature_names):
+    """
+    Checks that feature names matches the dimensions of X
+    """
+    if X.shape[1] == len(feature_names):
+        return np.array(feature_names)
+    else:
+        return None
+
 
 def check_inputs(X, y=None):
     """
