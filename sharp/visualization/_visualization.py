@@ -56,6 +56,9 @@ class ShaRPViz:
         gap_size=1,
         cmap="Pastel1",
         ax=None,
+        legend_loc="lower center",
+        legend_bbox_to_anchor=(0.5, 1.05),
+        legend_ncol=None,
         **kwargs
     ):
         if feature_names is None:
@@ -69,5 +72,8 @@ class ShaRPViz:
             gap_size=gap_size,
             cmap=cmap,
             ax=ax,
+            legend_loc=legend_loc,
+            legend_bbox_to_anchor=legend_bbox_to_anchor,
+            legend_ncol=legend_ncol,
             **kwargs
         )

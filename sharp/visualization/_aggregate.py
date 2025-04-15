@@ -17,6 +17,9 @@ def group_boxplot(
     gap_size=1,
     cmap="Pastel1",
     ax=None,
+    legend_loc="lower center",
+    legend_bbox_to_anchor=(0.5, 1.05),
+    legend_ncol=None,
     show=False,
     **kwargs,
 ):
@@ -60,6 +63,17 @@ def group_boxplot(
     colors = [plt.get_cmap(cmap)(i) for i in range(len(feature_names))]
     bin_names = df["target"].unique()
     pos_increment = 1 / (len(feature_names) + gap_size)
+
+    boxprops = {"facecolor": "C0", "edgecolor": "black"}
+    if "boxprops" in kwargs:
+        boxprops = {**boxprops, **kwargs["boxprops"]}
+        del kwargs["boxprops"]
+
+    medianprops = {"color": "black"}
+    if "medianprops" in kwargs:
+        medianprops = {**medianprops, **kwargs["medianprops"]}
+        del kwargs["medianprops"]
+
     boxes = []
     for i, bin_name in enumerate(bin_names):
         box = ax.boxplot(
@@ -67,8 +81,8 @@ def group_boxplot(
             widths=pos_increment,
             positions=[i + pos_increment * n for n in range(len(feature_names))],
             patch_artist=True,
-            medianprops={"color": "black"},
-            boxprops={"facecolor": "C0", "edgecolor": "black"},
+            medianprops=medianprops,
+            boxprops=boxprops,
             **kwargs,
         )
         boxes.append(box)
@@ -87,9 +101,9 @@ def group_boxplot(
     ax.legend(
         patches,
         feature_names,
-        loc="lower center",
-        bbox_to_anchor=(0.5, 1.05),
-        ncol=len(feature_names),
+        loc=legend_loc,
+        bbox_to_anchor=legend_bbox_to_anchor,
+        ncol=legend_ncol if legend_ncol is not None else len(feature_names),
     )
 
     if show:
