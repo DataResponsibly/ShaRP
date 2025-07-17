@@ -16,6 +16,7 @@ def check_feature_names(X):
 
     return feature_names
 
+
 def check_feature_names_dim(X, feature_names):
     """
     Checks that feature names matches the dimensions of X
