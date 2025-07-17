@@ -7,7 +7,13 @@ from itertools import product
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 from .utils._parallelize import parallel_loop
-from .utils import check_feature_names, check_feature_names_dim, check_inputs, check_measure, check_qoi
+from .utils import (
+    check_feature_names,
+    check_feature_names_dim,
+    check_inputs,
+    check_measure,
+    check_qoi,
+)
 from .visualization._visualization import ShaRPViz
 
 
@@ -127,7 +133,7 @@ class ShaRP(BaseEstimator):
         self._X = kwargs["X"] if "X" in kwargs.keys() else None
         self._y = kwargs["y"] if "y" in kwargs.keys() else None
 
-    def fit(self, X, y=None, feature_names = None):
+    def fit(self, X, y=None, feature_names=None):
         """
         Fit a ShaRP model to the given data.
 
