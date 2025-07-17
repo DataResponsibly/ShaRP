@@ -5,26 +5,28 @@ from sharp.qoi import get_qoi
 from sharp._measures import MEASURES
 
 
-def check_feature_names(X):
+def check_feature_names(X, feature_names=None):
     """
     Retrieve feature names from X.
     """
+    # If feature_names is provided and matches the dimensions of X, return it.
+    if feature_names is not None and X.shape[1] == len(feature_names):
+        # Check whether feature names match the dimensions of X
+        return np.array(feature_names)
+    elif feature_names is not None:
+        raise ValueError(
+            f"Dimension mismatch: X has {X.shape[1]} features, but feature_names"
+            f"has {len(feature_names)} entries."
+        )
+
+    # If feature_names is None, try to get them from X
     feature_names = _get_feature_names(X)
 
+    # If _get_feature_names returns None, create default feature names
     if feature_names is None:
         feature_names = np.array([f"Feature {i}" for i in range(X.shape[1])])
 
     return feature_names
-
-
-def check_feature_names_dim(X, feature_names):
-    """
-    Checks that feature names matches the dimensions of X
-    """
-    if X.shape[1] == len(feature_names):
-        return np.array(feature_names)
-    else:
-        return None
 
 
 def check_inputs(X, y=None):

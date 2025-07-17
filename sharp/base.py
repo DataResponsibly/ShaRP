@@ -9,7 +9,6 @@ from sklearn.utils import check_random_state
 from .utils._parallelize import parallel_loop
 from .utils import (
     check_feature_names,
-    check_feature_names_dim,
     check_inputs,
     check_measure,
     check_qoi,
@@ -162,10 +161,7 @@ class ShaRP(BaseEstimator):
             cache=self.cache,
         )
 
-        if feature_names is not None:
-            self.feature_names_ = check_feature_names_dim(X_, feature_names)
-        else:
-            self.feature_names_ = check_feature_names(X)
+        self.feature_names_ = check_feature_names(X, feature_names=feature_names)
 
         self.measure_ = check_measure(self.measure)
 

@@ -118,7 +118,7 @@ def test_explain_all_clf_obj_qoi(qoi, measure):
         random_state=RNG_SEED,
     )
 
-    xai.fit(X)
+    xai.fit(X, feature_names=["Feature 1", "Feature 2"])
     contributions = xai.all(X)
 
     if qoi.__class__.__name__ == "FlipQoI":
@@ -129,3 +129,5 @@ def test_explain_all_clf_obj_qoi(qoi, measure):
         assert (val == clf_function(X)).all()
     elif measure in ["unary", "set"] and qoi.__class__.__name__ != "FlipQoI":
         assert (contributions.sum(axis=1) >= 0).mean() == clf_function(X).mean()
+
+    assert (xai.feature_names_ == np.array(["Feature 1", "Feature 2"])).all()
