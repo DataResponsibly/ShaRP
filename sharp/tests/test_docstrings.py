@@ -11,7 +11,7 @@ import pytest
 
 from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
-from sklearn.utils import IS_PYPY
+import platform
 from sklearn.utils._testing import check_docstring_parameters
 from sklearn.utils._testing import _get_func_name
 from sklearn.utils._testing import ignore_warnings
@@ -23,6 +23,8 @@ from sklearn.utils.deprecation import _is_deprecated
 import sharp
 from sharp.qoi.base import BaseQoI
 from sharp.utils._testing import all_elements
+
+IS_PYPY = platform.python_implementation() == "PyPy"
 
 
 def is_qoi(estimator):
