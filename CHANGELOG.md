@@ -1,5 +1,55 @@
 # Changelog
 
+## [Unreleased](https://github.com/DataResponsibly/ShaRP/tree/HEAD)
+
+[Full Changelog](https://github.com/DataResponsibly/ShaRP/compare/v0.1.1...HEAD)
+
+**Fixed bugs:**
+
+- Top-k QoI - can't change k [\#68](https://github.com/DataResponsibly/ShaRP/issues/68)
+
+## [v0.1.1](https://github.com/DataResponsibly/ShaRP/tree/v0.1.1) (2025-09-10)
+
+[Full Changelog](https://github.com/DataResponsibly/ShaRP/compare/v0.1.0...v0.1.1)
+
+**Implemented features and enhancements:**
+
+- FEAT: Add optional feature\_names argument to ShaRP.fit\(\) [\#62](https://github.com/DataResponsibly/ShaRP/issues/62)
+- Add Hash table to lookup inference results [\#58](https://github.com/DataResponsibly/ShaRP/issues/58)
+
+**Fixed bugs:**
+
+- DOCS: Broken link to issues in bug report issue template [\#65](https://github.com/DataResponsibly/ShaRP/issues/65)
+- Fix bugs raised by tests [\#59](https://github.com/DataResponsibly/ShaRP/issues/59)
+
+**Documentation updates:**
+
+- DOCS: Broken link to Contributing Guidelines in issue template [\#64](https://github.com/DataResponsibly/ShaRP/issues/64)
+- Update README with correct installation instructions [\#57](https://github.com/DataResponsibly/ShaRP/issues/57)
+
+## [v0.1.0](https://github.com/DataResponsibly/ShaRP/tree/v0.1.0) (2025-03-26)
+
+[Full Changelog](https://github.com/DataResponsibly/ShaRP/compare/v0.1.a1...v0.1.0)
+
+**Implemented features and enhancements:**
+
+- Implement ShaRP wrapper for document retrieval [\#56](https://github.com/DataResponsibly/ShaRP/issues/56)
+- Get test coverage to \>75% [\#49](https://github.com/DataResponsibly/ShaRP/issues/49)
+- Raise warning when qoi is meant for labels \(in classification\) and there are a lot of unique values in the target [\#33](https://github.com/DataResponsibly/ShaRP/issues/33)
+
+**Fixed bugs:**
+
+- Defining `ShaRP` without an explicit `QoI` raises an `AttributeError` [\#44](https://github.com/DataResponsibly/ShaRP/issues/44)
+
+**Documentation updates:**
+
+- Improve content in documentation pages [\#13](https://github.com/DataResponsibly/ShaRP/issues/13)
+- Improve docstrings [\#3](https://github.com/DataResponsibly/ShaRP/issues/3)
+
+**Closed issues:**
+
+- Add python 3.13 support [\#60](https://github.com/DataResponsibly/ShaRP/issues/60)
+
 ## [v0.1.a1](https://github.com/DataResponsibly/ShaRP/tree/v0.1.a1) (2024-11-14)
 
 [Full Changelog](https://github.com/DataResponsibly/ShaRP/compare/v0.1.a0...v0.1.a1)
