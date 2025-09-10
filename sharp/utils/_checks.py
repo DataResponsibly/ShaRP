@@ -52,13 +52,13 @@ def check_measure(measure):
         return measure
 
 
-def check_qoi(qoi, target_function=None, X=None, cache=True):
+def check_qoi(qoi, target_function=None, X=None, cache=True, **kwargs):
     """
     If None, return a default function. If str, grab function from a dict. if function,
     check if it's valid and return itself.
     """
     # Target function is always required regardless of QoI
-    params = {"target_function": target_function, "cache": cache}
+    params = {"target_function": target_function, "cache": cache, **kwargs}
     define_qoi = True
     if isinstance(qoi, str):
 

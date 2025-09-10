@@ -129,8 +129,16 @@ class ShaRP(BaseEstimator):
         self.n_jobs = n_jobs
         self.verbose = verbose
         self.plot = ShaRPViz(self)
-        self._X = kwargs["X"] if "X" in kwargs.keys() else None
-        self._y = kwargs["y"] if "y" in kwargs.keys() else None
+
+        if "X" in kwargs.keys():
+            self._X = kwargs["X"]
+            kwargs.pop("X")
+
+        if "y" in kwargs.keys():
+            self._y = kwargs["y"]
+            kwargs.pop("y")
+
+        self.qoi_kwargs = kwargs if kwargs is not None else {}
 
     def fit(self, X, y=None, feature_names=None):
         """
@@ -159,6 +167,7 @@ class ShaRP(BaseEstimator):
             target_function=self.target_function,
             X=X_,
             cache=self.cache,
+            **self.qoi_kwargs,
         )
 
         self.feature_names_ = check_feature_names(X, feature_names=feature_names)
@@ -453,7 +462,7 @@ class ShaRP(BaseEstimator):
             X=sample2,
             sample_size=sample_size,
             coalition_size=coalition_size,
-            **kwargs
+            **kwargs,
         )
 
     def pairwise_set(self, samples1, samples2, **kwargs):
